@@ -1,0 +1,41 @@
+﻿@page
+@model Logging_Central.Pages.Status.LogsModel
+@{
+    ViewData["Title"] = "Logs";
+}
+
+<h2>Последние логи</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-route-sortOrder="@(!Model.CurrentSortOrder)">
+                    Время
+                    @if (Model.CurrentSortOrder)
+                    {
+                        <span>▲</span>
+                    }
+                    else
+                    {
+                        <span>▼</span>
+                    }
+                </a>
+            </th>
+            <th>Уровень</th>
+            <th>Сообщение</th>
+            <th>Exception</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model.Logs)
+        {
+            <tr>
+                <td>@log.Timestamp</td>
+                <td>@log.Level</td>
+                <td>@log.Message</td>
+                <td>@log.Exception</td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Logging_Central.Pages
@@ -14,10 +13,10 @@ namespace Logging_Central.Pages
 
         public void OnGet()
         {
-            _logger.LogDebug("Это тестовый DEBUG лог в {Time}", DateTime.Now);
-            _logger.LogInformation("Это тестовый INFO лог в {Time}", DateTime.Now);
-            _logger.LogWarning("Это тестовый WARNING лог в {Time}", DateTime.Now);
-            _logger.LogError("Это тестовый ERROR лог в {Time}", DateTime.Now);
+            _logger.LogDebug("Это тестовый DEBUG лог");
+            _logger.LogInformation("Это тестовый INFO лог");
+            _logger.LogWarning("Это тестовый WARNING лог");
+            _logger.LogError("Это тестовый ERROR лог");
         }
     }
 }

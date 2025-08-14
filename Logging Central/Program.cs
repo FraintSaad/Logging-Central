@@ -1,21 +1,23 @@
+using Data.Context;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug() 
+    .MinimumLevel.Debug()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
     .Enrich.FromLogContext()
-    .WriteTo.Console() 
-    
+    .WriteTo.Console()
+
     .CreateLogger();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 Log.Logger = new LoggerConfiguration()
   .MinimumLevel.Debug()
   .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+  .Enrich.FromLogContext()
   .WriteTo.MSSqlServer(
         connectionString: connectionString,
         sinkOptions: new MSSqlServerSinkOptions
@@ -30,6 +32,8 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Logging.ClearProviders();
 builder.Host.UseSerilog();
+
+builder.Services.AddDbContext<LogsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddRazorPages();
 
