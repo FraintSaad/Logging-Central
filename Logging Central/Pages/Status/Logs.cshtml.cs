@@ -1,6 +1,5 @@
 using Data.Context;
 using Data.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +17,25 @@ namespace Logging_Central.Pages.Status
         public bool CurrentSortOrder { get; set; }
         public List<LogEntity> Logs { get; set; } = new();
 
-        public async Task OnGetAsync(bool sortOrder, string? level)
+        public async Task OnGetAsync(bool sortOrder)
         {
             CurrentSortOrder = sortOrder;
-            var query = _dbContext.Logs.AsQueryable();
-            query = CurrentSortOrder ? query.OrderBy(l => l.Timestamp) : query.OrderByDescending(l => l.Timestamp);
-            
+
+            if (sortOrder == true)
+            {
+                Logs = await _dbContext.Logs
+                                   .OrderBy(log => log.Timestamp)
+                                   .Take(100)
+                                   .ToListAsync();
+            }
+            else
+            {
+                Logs = await _dbContext.Logs
+                                   .OrderByDescending(log => log.Timestamp)
+                                   .Take(100)
+                                   .ToListAsync();
+            }
+
         }
     }
 }
