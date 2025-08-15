@@ -7,8 +7,8 @@ namespace LogsCentral.Controllers
     [Route("status")]
     public class NotificationsController : Controller
     {
-        private readonly NotificationsDbContext _dbContext;
-        public NotificationsController(NotificationsDbContext dbContext)
+        private readonly LogsDbContext _dbContext;
+        public NotificationsController(LogsDbContext dbContext)
         {
             _dbContext = dbContext;
         }

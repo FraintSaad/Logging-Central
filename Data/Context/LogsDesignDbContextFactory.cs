@@ -1,12 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Data.Context
 {
@@ -14,7 +7,12 @@ namespace Data.Context
     {
         public LogsDbContext CreateDbContext(string[] args)
         {
-            throw new NotImplementedException();
+            var connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=LogsDB;Integrated Security=True;Pooling=False;Encrypt=True;Trust Server Certificate=True";
+
+            var optionsBuilder = new DbContextOptionsBuilder<LogsDbContext>();
+            var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            optionsBuilder.UseSqlServer(connectionString);
+            return new LogsDbContext(optionsBuilder.Options);
         }
     }
 }

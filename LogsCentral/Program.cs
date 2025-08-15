@@ -14,36 +14,30 @@ namespace LogsCentral
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            Log.Logger = new LoggerConfiguration()
-                            .MinimumLevel.Debug()
-                            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-                            .Enrich.FromLogContext()
-                            .WriteTo.Console()
 
-                            .CreateLogger();
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
             Log.Logger = new LoggerConfiguration()
               .MinimumLevel.Debug()
               .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                            .WriteTo.Console()
               .Enrich.FromLogContext()
               .WriteTo.MSSqlServer(
                     connectionString: connectionString,
                     sinkOptions: new MSSqlServerSinkOptions
                     {
                         TableName = "SerilogEvents",
-                        AutoCreateSqlTable = true,
+                        AutoCreateSqlTable = false,
                     },
                     columnOptions: new ColumnOptions(),
                     appConfiguration: builder.Configuration
               )
               .CreateLogger();
-
             builder.Logging.ClearProviders();
             builder.Host.UseSerilog();
 
+
             builder.Services.AddDbContext<LogsDbContext>(options => options.UseSqlServer(connectionString));
-            builder.Services.AddDbContext<NotificationsDbContext>(options => options.UseSqlServer(connectionString));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -64,6 +58,12 @@ namespace LogsCentral
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<LogsDbContext>();
+                dbContext.Database.Migrate();
+            }
 
             app.Run();
         }
