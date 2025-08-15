@@ -12,7 +12,6 @@ namespace Data.Context
     {
         public LogsDbContext(DbContextOptions<LogsDbContext> options) : base(options) { }
         public DbSet<LogEntity> Logs { get; set; }
-        public DbSet<NotificationModel> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

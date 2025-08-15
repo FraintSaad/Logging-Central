@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Data.Models
+﻿namespace LogsCentral.Models
 {
-    public class NotificationModel
+    public class NotificationsViewModel
     {
         public int Id { get; set; }
         public int Period { get; set; }

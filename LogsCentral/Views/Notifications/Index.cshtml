@@ -1,0 +1,61 @@
+﻿@model List<LogsCentral.Models.NotificationsViewModel>
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<h2>Уведомления</h2>
+<p>Если за последние X минут было Y количество логов с Z уровнем, тогда отослать уведомления на указанные почтовые ящики</p>
+<form asp-action="Add" method="post">
+    <label>Минут:</label>
+    <input type="number" name="Period" required />
+
+    <label>Количество логов:</label>
+    <input type="number" name="ThrashHold" required />
+
+    <label>Уровень логов:</label>
+    <input type="checkbox" name="selectedLevels" value="Debug" /> Debug
+    <input type="checkbox" name="selectedLevels" value="Info" /> Info
+    <input type="checkbox" name="selectedLevels" value="Warning" /> Warning
+    <input type="checkbox" name="selectedLevels" value="Error" /> Error
+
+    <label>Почта:</label>
+    <input type="email" name="Email" required />
+
+    <button type="submit">Добавить</button>
+</form>
+
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Период</th>
+            <th>Порог</th>
+            <th>Уровни</th>
+            <th>Email</th>
+            <th>Комментарий</th>
+            <th>Дата создания</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>@n.Id</td>
+                <td>@n.Period</td>
+                <td>@n.ThrashHold</td>
+                <td>@n.LogLevels</td>
+                <td>@n.Email</td>
+                <td>@n.Content</td>
+                <td>@n.CreatedAt</td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@n.Id" method="post" style="display:inline;">
+                        <button type="submit">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

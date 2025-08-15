@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36401.2
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging Central", "Logging Central\Logging Central.csproj", "{213E23D8-84E6-46B6-A8EF-992071539505}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{E5D64253-AAFD-42A9-A47F-1978604F5B60}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogsCentral", "LogsCentral\LogsCentral.csproj", "{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{213E23D8-84E6-46B6-A8EF-992071539505}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{213E23D8-84E6-46B6-A8EF-992071539505}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{213E23D8-84E6-46B6-A8EF-992071539505}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{213E23D8-84E6-46B6-A8EF-992071539505}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E5D64253-AAFD-42A9-A47F-1978604F5B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E5D64253-AAFD-42A9-A47F-1978604F5B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5D64253-AAFD-42A9-A47F-1978604F5B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5D64253-AAFD-42A9-A47F-1978604F5B60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
