@@ -47,7 +47,7 @@ namespace LogsCentral.Controllers
                 selectedLevels.Add("Error"); 
             }
 
-            var query = _dbContext.Logs.AsNoTracking().AsQueryable();
+            var query = _dbContext.Logs.AsQueryable();
 
             if (selectedLevels.Count > 0)
             {

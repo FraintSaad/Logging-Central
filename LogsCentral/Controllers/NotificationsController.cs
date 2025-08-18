@@ -1,6 +1,8 @@
 ﻿using Data.Context;
+using Data.Entities;
 using LogsCentral.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LogsCentral.Controllers
 {
@@ -12,30 +14,50 @@ namespace LogsCentral.Controllers
         {
             _dbContext = dbContext;
         }
-        private static List<NotificationsViewModel> _notifications = new();
-        private static int _idCounter = 1;
         [HttpGet("notifications")]
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            return View(_notifications);
+            var configs = await _dbContext.Notifications.ToListAsync();
+            var models = configs.Select(c => new NotificationsViewModel
+            {
+                Id = c.Id,
+                Period = c.Period,
+                CreatedAt = c.CreatedAt,
+                ThrashHold = c.ThrashHold,
+                LogLevels = c.LogLevels,
+                Email = c.Email
+            }).ToList();
+           
+
+            return View(models);
         }
         [HttpPost("add")]
-        public IActionResult Add(NotificationsViewModel model, string[] selectedLevels)
+        public async Task<IActionResult> Add(NotificationsViewModel model, string[] selectedLevels)
         {
-            model.Id = _idCounter++;
-            model.CreatedAt = DateTime.Now;
-            model.LogLevels = string.Join(",", selectedLevels);
-            _notifications.Add(model);
+            var entity = new NotificationEntity
+            {
+                Period = model.Period,
+                CreatedAt = DateTime.Now,
+                ThrashHold = model.ThrashHold,
+                LogLevels = string.Join(",", selectedLevels),
+                Email = model.Email
+            };
+
+            _dbContext.Notifications.Add(entity);
+            await _dbContext.SaveChangesAsync();
 
             return RedirectToAction("Index");
         }
 
         [HttpPost("delete/{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
-            var item = _notifications.FirstOrDefault(n => n.Id == id);
+            var item = await _dbContext.Notifications.FindAsync(id);
             if (item != null)
-                _notifications.Remove(item);
+            {
+                _dbContext.Notifications.Remove(item);
+                await _dbContext.SaveChangesAsync();
+            }
 
             return RedirectToAction("Index");
         }
