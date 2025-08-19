@@ -2,6 +2,7 @@
 using Data.Entities;
 using Data.Models;
 using LogsCentral.Models;
+using LogsCentral.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
@@ -13,9 +14,12 @@ namespace LogsCentral.Controllers
     public class NotificationsController : Controller
     {
         private readonly LogsDbContext _dbContext;
-        public NotificationsController(LogsDbContext dbContext)
+        private readonly EmailService _emailService;
+
+        public NotificationsController(LogsDbContext dbContext, EmailService emailService)
         {
             _dbContext = dbContext;
+            _emailService = emailService;
         }
         [HttpGet("notifications")]
         public async Task<IActionResult> Index()
@@ -73,25 +77,14 @@ namespace LogsCentral.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpGet("test-email")]
         public IActionResult TestEmail()
         {
-            var from = "gtbartbrsynts7@gmail.com";  
-            var to = "islamqwertyu@mail.ru"; 
-            var password = "ocnm sjcb jfho jlly";
-
-            using (var client = new SmtpClient("smtp.gmail.com", 587))
-            {
-                client.Credentials = new NetworkCredential(from, password);
-                client.EnableSsl = true;
-
-                var mail = new MailMessage(from, to)
-                {
-                    Subject = "Тестовое письмо",
-                    Body = "Привет! Это тест отправки логов :)"
-                };
-
-                client.Send(mail);
-            }
+            _emailService.Send(
+                "islamqwertyu@mail.ru",
+                "Тестовое уведомление",
+                "Если ты читаешь это письмо, значит EmailService работает!"
+            );
 
             return Ok("Письмо отправлено!");
         }
