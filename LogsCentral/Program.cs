@@ -1,4 +1,5 @@
 using Data.Context;
+using LogsCentral.Models;
 using LogsCentral.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -15,8 +16,13 @@ namespace LogsCentral
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-            builder.Services.AddSingleton(new EmailService("gtbartbrsynts7@gmail.com", "ocnm sjcb jfho jlly"));
 
+            var emailSettings = new EmailSettings();
+            builder.Configuration.GetSection("EmailSettings").Bind(emailSettings);
+            emailSettings.Validate();
+
+            builder.Services.AddSingleton(emailSettings);
+            builder.Services.AddSingleton<EmailService>();
 
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

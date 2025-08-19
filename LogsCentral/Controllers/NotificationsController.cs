@@ -76,17 +76,21 @@ namespace LogsCentral.Controllers
 
             return RedirectToAction("Index");
         }
-
         [HttpGet("test-email")]
-        public IActionResult TestEmail()
+        public async Task<IActionResult> TestEmail()
         {
-            _emailService.Send(
-                "islamqwertyu@mail.ru",
-                "Тестовое уведомление",
-                "Если ты читаешь это письмо, значит EmailService работает!"
-            );
+            var configs = await _dbContext.Notifications.ToListAsync();
 
-            return Ok("Письмо отправлено!");
+            foreach (var config in configs)
+            {
+                _emailService.Send(
+                    config.Email,
+                    "Тестовое уведомление",
+                    $"Привет, {config.Email}! Это тест. Если письмо пришло — значит всё работает."
+                );
+            }
+
+            return Ok("Письма отправлены всем получателям из конфигов!");
         }
     }
 }
