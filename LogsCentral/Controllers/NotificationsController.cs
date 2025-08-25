@@ -5,6 +5,7 @@ using LogsCentral.Models;
 using LogsCentral.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
 using System.Net;
 using System.Net.Mail;
 
@@ -24,26 +25,25 @@ namespace LogsCentral.Controllers
         [HttpGet("notifications")]
         public async Task<IActionResult> Index()
         {
-            _dbContext.Logs.Add(new LogEntity
+            _dbContext.Logs.AddRange(new[]
             {
-                Timestamp = DateTime.Now,
-                Level = "Error",
-                Message = "Test error log"
+                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 1" },
+                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 2" },
+                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 3" },
+                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 4" },
+                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 5" }
             });
             _dbContext.SaveChanges();
 
             var configs = await _dbContext.Notifications.ToListAsync();
             var models = configs.Select(c => new NotificationsViewModel
             {
-                Id = c.Id,
                 Period = c.Period,
                 CreatedAt = c.CreatedAt,
                 ThrashHold = c.ThrashHold,
                 LogLevels = c.LogLevels,
                 Email = c.Email
             }).ToList();
-
-            TestEmail();
             return View(models);
         }
         [HttpPost("add")]
@@ -75,22 +75,6 @@ namespace LogsCentral.Controllers
             }
 
             return RedirectToAction("Index");
-        }
-        [HttpGet("test-email")]
-        public async Task<IActionResult> TestEmail()
-        {
-            var configs = await _dbContext.Notifications.ToListAsync();
-
-            foreach (var config in configs)
-            {
-                _emailService.Send(
-                    config.Email,
-                    "Тестовое уведомление",
-                    $"Привет, {config.Email}! Это тест. Если письмо пришло — значит всё работает."
-                );
-            }
-
-            return Ok("Письма отправлены всем получателям из конфигов!");
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Data.Context
         public LogsDbContext(DbContextOptions<LogsDbContext> options) : base(options) { }
         public DbSet<NotificationEntity> Notifications { get; set; }
         public DbSet<LogEntity> Logs { get; set; }
+        public DbSet<SentNotificationEntity> SentNotifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

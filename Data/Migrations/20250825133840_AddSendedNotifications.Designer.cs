@@ -4,6 +4,7 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(LogsDbContext))]
-    partial class LogsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250825133840_AddSendedNotifications")]
+    partial class AddSendedNotifications
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +55,7 @@ namespace Data.Migrations
                     b.ToTable("Notifications");
                 });
 
-            modelBuilder.Entity("Data.Entities.SentNotificationEntity", b =>
+            modelBuilder.Entity("Data.Entities.SendedNotificationEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -71,7 +74,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SentNotifications");
+                    b.ToTable("SendedNotifications");
                 });
 
             modelBuilder.Entity("Data.Models.LogEntity", b =>

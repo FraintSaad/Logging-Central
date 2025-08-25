@@ -19,7 +19,7 @@
     <input type="checkbox" name="selectedLevels" value="Error" /> Error
 
     <label>Почта:</label>
-    <input type="email" name="Email" required />
+    <input type="email" name="Email" multiple required />
 
     <button type="submit">Добавить</button>
 </form>
@@ -29,7 +29,6 @@
 <table class="table">
     <thead>
         <tr>
-            <th>ID</th>
             <th>Период</th>
             <th>Порог</th>
             <th>Уровни</th>
@@ -42,7 +41,6 @@
         @foreach (var n in Model)
         {
             <tr>
-                <td>@n.Id</td>
                 <td>@n.Period</td>
                 <td>@n.ThrashHold</td>
                 <td>@n.LogLevels</td>

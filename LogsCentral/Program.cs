@@ -23,6 +23,8 @@ namespace LogsCentral
 
             builder.Services.AddSingleton(emailSettings);
             builder.Services.AddSingleton<EmailService>();
+            builder.Services.AddHostedService<NotificationsBackgroundService>();
+
 
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
