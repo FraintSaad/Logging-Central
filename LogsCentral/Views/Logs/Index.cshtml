@@ -1,0 +1,53 @@
+﻿@using Microsoft.AspNetCore.WebUtilities
+@{
+    ViewData["Title"] = "Logs";
+
+    var dict = Context.Request.Query.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString());
+    dict["sortOrder"] = (!Model.CurrentSortOrder).ToString();
+    var sortHref = QueryHelpers.AddQueryString(Context.Request.Path, dict);
+}
+
+<h2>Последние логи</h2>
+<form action="/status/logs" method="get">
+    <label><input type="checkbox" name="logLevelDebug" @(Model.LogLevelDebug ? "checked" : "") /> Debug</label>
+    <label><input type="checkbox" name="logLevelInfo" @(Model.LogLevelInfo ? "checked" : "") /> Information</label>
+    <label><input type="checkbox" name="logLevelWarning" @(Model.LogLevelWarning ? "checked" : "") /> Warning</label>
+    <label><input type="checkbox" name="logLevelError" @(Model.LogLevelError ? "checked" : "") /> Error</label>
+    <input type="submit" value="Применить" />
+</form>
+
+<table class="table" height="500">
+    <thead>
+
+        <tr>
+            <th>
+                <a href="@sortHref">
+                    Время
+                    @if (Model.CurrentSortOrder)
+                    {
+                        <span>▲</span>
+                    }
+                    else
+                    {
+
+                        <span>▼</span>
+                    }
+                </a>
+            </th>
+            <th>Уровень</th>
+            <th>Сообщение</th>
+            <th>Exception</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model.Logs)
+        {
+            <tr>
+                <td>@log.Timestamp</td>
+                <td>@log.Level</td>
+                <td>@log.Message</td>
+                <td>@log.Exception</td>
+            </tr>
+        }
+    </tbody>
+</table>
