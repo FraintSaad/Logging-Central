@@ -1,4 +1,4 @@
-﻿namespace LogsCentral.Models
+﻿namespace LogsCentral.Settings
 {
     public class EmailSettings
     {

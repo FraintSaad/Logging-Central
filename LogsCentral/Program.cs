@@ -2,6 +2,7 @@ using Data.Context;
 using LogsCentral.Jobs;
 using LogsCentral.Models;
 using LogsCentral.Services;
+using LogsCentral.Settings;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;

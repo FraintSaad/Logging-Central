@@ -1,0 +1,17 @@
+﻿@model StatusViewModel
+
+<h2>Статистика логов</h2>
+
+<p>Логи за последние 24 часа: @Model.LastDayCount</p>
+<p>Логи за последнюю неделю: @Model.LastWeekCount</p>
+<p>Логи за последний месяц: @Model.LastMonthCount</p>
+
+<form method="get">
+    <label>Выбрать период (дней): <input type="number" name="days" value="@Model.SelectedDays" /></label>
+    <button type="submit">Применить</button>
+</form>
+
+<h3>Всего логов за выбранный период: @Model.SelectedPeriodCount</h3>
+
+<canvas id="logsChart" width="400" height="400"></canvas>
+

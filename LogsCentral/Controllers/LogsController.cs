@@ -91,9 +91,12 @@ namespace LogsCentral.Controllers
                 query = logsViewModel.CurrentSortOrder ? query.OrderBy(l => l.Timestamp) : query.OrderByDescending(l => l.Timestamp);
             }
 
-            int pageSize = 1000;
+            int pageSize = 100;
             int page = int.TryParse(Request.Query["page"], out var p) ? p : 1;
-            if (page < 1) page = 1;
+            if (page < 1)
+            {
+                page = 1;
+            }
             int totalLogs = await query.CountAsync();
             logsViewModel.TotalPages = (int)Math.Ceiling(totalLogs / (double)pageSize);
             logsViewModel.CurrentPage = page;

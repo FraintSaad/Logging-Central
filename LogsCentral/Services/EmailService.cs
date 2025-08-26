@@ -1,4 +1,4 @@
-﻿using LogsCentral.Models;
+﻿using LogsCentral.Settings;
 using System.Net;
 using System.Net.Mail;
 
