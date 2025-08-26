@@ -1,4 +1,5 @@
 using Data.Context;
+using LogsCentral.Jobs;
 using LogsCentral.Models;
 using LogsCentral.Services;
 using Microsoft.EntityFrameworkCore;
@@ -22,8 +23,9 @@ namespace LogsCentral
             emailSettings.Validate();
 
             builder.Services.AddSingleton(emailSettings);
-            builder.Services.AddSingleton<EmailService>();
-            builder.Services.AddHostedService<NotificationsBackgroundService>();
+            builder.Services.AddScoped<EmailService>();
+            builder.Services.AddScoped<NotificationsSenderService>();
+            builder.Services.AddHostedService<NotificationsSenderBackgroundJob>();
 
 
 

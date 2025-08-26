@@ -1,4 +1,5 @@
 ﻿using Data.Models;
+using Serilog;
 
 namespace LogsCentral.Models
 {
@@ -11,5 +12,7 @@ namespace LogsCentral.Models
         public bool LogLevelInfo { get; set; } = true;
         public bool LogLevelWarning { get; set; } = true;
         public bool LogLevelError { get; set; } = true;
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
     }
 }

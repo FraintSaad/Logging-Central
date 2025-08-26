@@ -20,9 +20,9 @@ namespace LogsCentral.Controllers
         {
             var logsViewModel = new LogsViewModel();
             logsViewModel.CurrentSortOrder = Convert.ToBoolean(Request.Query["sortOrder"].FirstOrDefault());
-
+            
+            _dbContext.SaveChanges();
             logsViewModel.LogLevelDebug = Request.Query["logLevelDebug"].FirstOrDefault() == "on";
-
             logsViewModel.CurrentSortOrder = bool.TryParse(Request.Query["sortOrder"], out var sort) && sort;
 
             logsViewModel.LogLevelDebug = Request.Query.ContainsKey("logLevelDebug");
@@ -36,7 +36,7 @@ namespace LogsCentral.Controllers
             }
             if (logsViewModel.LogLevelInfo)
             {
-                selectedLevels.Add("Information"); 
+                selectedLevels.Add("Information");
             }
             if (logsViewModel.LogLevelWarning)
             {
@@ -44,7 +44,7 @@ namespace LogsCentral.Controllers
             }
             if (logsViewModel.LogLevelError)
             {
-                selectedLevels.Add("Error"); 
+                selectedLevels.Add("Error");
             }
 
             var query = _dbContext.Logs.AsQueryable();
@@ -62,7 +62,52 @@ namespace LogsCentral.Controllers
                 query = query.OrderByDescending(l => l.Timestamp);
             }
 
-            logsViewModel.Logs = await query.Take(100).ToListAsync();
+            var sortBy = Request.Query["sortBy"].FirstOrDefault();
+
+            if (sortBy == "Level")
+            {
+                query = logsViewModel.CurrentSortOrder
+                                     ? query.OrderBy(l => l.Level == "Debug" ? 1 :
+                                                          l.Level == "Information" ? 2 :
+                                                          l.Level == "Warning" ? 3 :
+                                                          l.Level == "Error" ? 4 : 5)
+                                     : query.OrderByDescending(l => l.Level == "Debug" ? 1 :
+                                                          l.Level == "Information" ? 2 :
+                                                          l.Level == "Warning" ? 3 :
+                                                          l.Level == "Error" ? 4 : 5);
+            }
+            else if (sortBy == "Message")
+            {
+                query = logsViewModel.CurrentSortOrder
+                    ? query.OrderBy(l => l.Message)
+                    : query.OrderByDescending(l => l.Message);
+            }
+            else if (sortBy == "Exception")
+            {
+                query = logsViewModel.CurrentSortOrder
+                    ? query.OrderBy(l => l.Exception)
+                    : query.OrderByDescending(l => l.Exception);
+            }
+            else
+            {
+                query = logsViewModel.CurrentSortOrder
+                    ? query.OrderBy(l => l.Timestamp)
+                    : query.OrderByDescending(l => l.Timestamp);
+            }
+
+            int pageSize = 50; // сколько логов на одной странице
+            int page = int.TryParse(Request.Query["page"], out var p) ? p : 1;
+            if (page < 1) page = 1;
+
+            int totalLogs = await query.CountAsync();
+            logsViewModel.TotalPages = (int)Math.Ceiling(totalLogs / (double)pageSize);
+            logsViewModel.CurrentPage = page;
+
+            logsViewModel.Logs = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
 
             return View(logsViewModel);
         }

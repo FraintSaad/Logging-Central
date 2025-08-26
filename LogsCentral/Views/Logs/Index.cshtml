@@ -4,7 +4,10 @@
 
     var dict = Context.Request.Query.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString());
     dict["sortOrder"] = (!Model.CurrentSortOrder).ToString();
-    var sortHref = QueryHelpers.AddQueryString(Context.Request.Path, dict);
+    var sortTimeHref = QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["sortBy"] = "Timestamp" });
+    var sortLevelHref = QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["sortBy"] = "Level" });
+    var sortMessageHref = QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["sortBy"] = "Message" });
+    var sortExceptionHref = QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["sortBy"] = "Exception" });
 }
 
 <h2>Последние логи</h2>
@@ -20,23 +23,10 @@
     <thead>
 
         <tr>
-            <th>
-                <a href="@sortHref">
-                    Время
-                    @if (Model.CurrentSortOrder)
-                    {
-                        <span>▲</span>
-                    }
-                    else
-                    {
-
-                        <span>▼</span>
-                    }
-                </a>
-            </th>
-            <th>Уровень</th>
-            <th>Сообщение</th>
-            <th>Exception</th>
+            <th><a href="@sortTimeHref">Время</a></th>
+            <th><a href="@sortLevelHref">Уровень</a></th>
+            <th><a href="@sortMessageHref">Сообщение</a></th>
+            <th><a href="@sortExceptionHref">Exception</a></th>
         </tr>
     </thead>
     <tbody>
@@ -51,3 +41,36 @@
         }
     </tbody>
 </table>
+<nav>
+    <ul class="pagination">
+        @if (Model.CurrentPage > 1)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = (Model.CurrentPage - 1).ToString() })">
+                    Предыдущая
+                </a>
+            </li>
+        }
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link"
+                   href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = i.ToString() })">
+                    @i
+                </a>
+            </li>
+        }
+
+        @if (Model.CurrentPage < Model.TotalPages)
+        {
+            <li class="page-item">
+                <a class="page-link"
+                   href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = (Model.CurrentPage + 1).ToString() })">
+                    Следующая
+                </a>
+            </li>
+        }
+    </ul>
+</nav>
