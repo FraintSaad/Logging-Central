@@ -1,10 +1,12 @@
 ﻿namespace LogsCentral.Models
 {
+    // Rename to NotificationViewModel
     public class NotificationsViewModel
     {
         public int Id { get; set; }
         public int Period { get; set; }
         public DateTime CreatedAt { get; set; }
+        // Fix typo to Threshold
         public int ThrashHold { get; set; }
         public string LogLevels { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

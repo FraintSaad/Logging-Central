@@ -11,6 +11,7 @@ using System.Net.Mail;
 
 namespace LogsCentral.Controllers
 {
+    // Make this notifications
     [Route("status")]
     public class NotificationsController : Controller
     {
@@ -35,7 +36,9 @@ namespace LogsCentral.Controllers
             });
             _dbContext.SaveChanges();
 
+            // Rename to notificationEntities
             var configs = await _dbContext.Notifications.ToListAsync();
+
             var models = configs.Select(c => new NotificationsViewModel
             {
                 Period = c.Period,
@@ -44,6 +47,8 @@ namespace LogsCentral.Controllers
                 LogLevels = c.LogLevels,
                 Email = c.Email
             }).ToList();
+
+            // Send NotificationsPageModel
             return View(models);
         }
         [HttpPost("add")]

@@ -11,6 +11,7 @@ namespace Data.Entities
         public int Id { get; set; }
 
         public int LogId { get; set; }
+        // Rename to NotrificationRuleId
         public int NotificationId { get; set; }
         public DateTime SentAt { get; set; }
     }

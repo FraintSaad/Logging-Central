@@ -48,7 +48,6 @@ public class NotificationsSenderService
                         SentAt = DateTime.Now
                     })
                 );
-
                 await _db.SaveChangesAsync(cancellationToken);
             }
         }

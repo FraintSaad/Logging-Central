@@ -4,6 +4,7 @@ using System.Diagnostics;
 
 namespace LogsCentral.Controllers
 {
+    // REMOVE: Unused controller
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

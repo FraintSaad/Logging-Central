@@ -2,6 +2,7 @@
 
 namespace LogsCentral.Models
 {
+    // Rename to LogsPageModel
     public class LogsViewModel
     {
 

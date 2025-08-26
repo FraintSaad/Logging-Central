@@ -1,5 +1,6 @@
 ﻿namespace LogsCentral.Models
 {
+    // Rename to StatusPageModel
     public class StatusViewModel
     {
 
