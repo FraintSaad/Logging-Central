@@ -5,33 +5,30 @@ using Microsoft.EntityFrameworkCore;
 
 public class NotificationsSenderService
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly LogsDbContext _db;
     private readonly EmailService _emailService;
 
-    public NotificationsSenderService(IServiceProvider serviceProvider, EmailService emailService)
+    public NotificationsSenderService(LogsDbContext db, EmailService emailService)
     {
-        _serviceProvider = serviceProvider;
+        _db = db;
         _emailService = emailService;
     }
 
     public async Task ProcessNotificationsAsync(CancellationToken cancellationToken = default)
     {
-        using var scope = _serviceProvider.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<LogsDbContext>();
-
-        var notifications = await db.Notifications.ToListAsync(cancellationToken);
+        var notifications = await _db.Notifications.ToListAsync(cancellationToken);
 
         foreach (var config in notifications)
         {
             var since = DateTime.Now.AddMinutes(-config.Period);
             var logLevels = config.LogLevels.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
-            var alreadySentIds = db.SentNotifications
+            var alreadySentIds = _db.SentNotifications
                                    .Where(ln => ln.NotificationId == config.Id)
                                    .Select(ln => ln.LogId)
                                    .ToHashSet();
 
-            var logs = await db.Logs
+            var logs = await _db.Logs
                                .Where(l => l.Timestamp >= since &&
                                       logLevels.Contains(l.Level) &&
                                       !alreadySentIds.Contains(l.Id)).ToListAsync(cancellationToken);
@@ -43,7 +40,7 @@ public class NotificationsSenderService
                     $"Логи за последние {config.Period} минут",
                     $"Количество логов: {logs.Count}\n\n{body}");
 
-                db.SentNotifications.AddRange(
+                _db.SentNotifications.AddRange(
                     logs.Select(l => new SentNotificationEntity
                     {
                         LogId = l.Id,
@@ -52,7 +49,7 @@ public class NotificationsSenderService
                     })
                 );
 
-                await db.SaveChangesAsync(cancellationToken);
+                await _db.SaveChangesAsync(cancellationToken);
             }
         }
     }

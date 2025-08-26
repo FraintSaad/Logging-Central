@@ -1,5 +1,4 @@
 ﻿using Data.Models;
-using Serilog;
 
 namespace LogsCentral.Models
 {

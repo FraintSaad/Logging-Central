@@ -84,31 +84,20 @@ namespace LogsCentral.Controllers
             }
             else if (sortBy == "Exception")
             {
-                query = logsViewModel.CurrentSortOrder
-                    ? query.OrderBy(l => l.Exception)
-                    : query.OrderByDescending(l => l.Exception);
+                query = logsViewModel.CurrentSortOrder ? query.OrderBy(l => l.Exception) : query.OrderByDescending(l => l.Exception);
             }
             else
             {
-                query = logsViewModel.CurrentSortOrder
-                    ? query.OrderBy(l => l.Timestamp)
-                    : query.OrderByDescending(l => l.Timestamp);
+                query = logsViewModel.CurrentSortOrder ? query.OrderBy(l => l.Timestamp) : query.OrderByDescending(l => l.Timestamp);
             }
 
-            int pageSize = 50; // сколько логов на одной странице
+            int pageSize = 1000;
             int page = int.TryParse(Request.Query["page"], out var p) ? p : 1;
             if (page < 1) page = 1;
-
             int totalLogs = await query.CountAsync();
             logsViewModel.TotalPages = (int)Math.Ceiling(totalLogs / (double)pageSize);
             logsViewModel.CurrentPage = page;
-
-            logsViewModel.Logs = await query
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-
+            logsViewModel.Logs = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
             return View(logsViewModel);
         }
     }
