@@ -9,6 +9,7 @@ namespace LogsCentral.Controllers
     [Route("status")]
     public class LogsController : Controller
     {
+        // Перенести в ViewModel
         private readonly LogsDbContext _dbContext;
         public LogsController(LogsDbContext dbContext)
         {
@@ -18,17 +19,19 @@ namespace LogsCentral.Controllers
         [HttpGet("logs")]
         public async Task<IActionResult> Index()
         {
+            // Перенести в DI
             var logsViewModel = new LogsViewModel();
-            logsViewModel.CurrentSortOrder = Convert.ToBoolean(Request.Query["sortOrder"].FirstOrDefault());
-            
+            // Зачем?
             _dbContext.SaveChanges();
-            logsViewModel.LogLevelDebug = Request.Query["logLevelDebug"].FirstOrDefault() == "on";
-            logsViewModel.CurrentSortOrder = bool.TryParse(Request.Query["sortOrder"], out var sort) && sort;
 
+            // Move all this logic to viewmodel
+            logsViewModel.LogLevelDebug = Request.Query["logLevelDebug"].FirstOrDefault() == "on";
+            logsViewModel.CurrentSortOrder = bool.TryParse(Request.Query["sortOrder"], out var sort) == true ? sort : false;
             logsViewModel.LogLevelDebug = Request.Query.ContainsKey("logLevelDebug");
             logsViewModel.LogLevelInfo = Request.Query.ContainsKey("logLevelInfo");
             logsViewModel.LogLevelWarning = Request.Query.ContainsKey("logLevelWarning");
             logsViewModel.LogLevelError = Request.Query.ContainsKey("logLevelError");
+           
             var selectedLevels = new List<string>();
             if (logsViewModel.LogLevelDebug)
             {
@@ -53,7 +56,8 @@ namespace LogsCentral.Controllers
             {
                 query = query.Where(l => l.Level != null && selectedLevels.Contains(l.Level));
             }
-            if (logsViewModel.CurrentSortOrder == true)
+            // Убрать дублирование
+            if (logsViewModel.CurrentSortOrder)
             {
                 query = query.OrderBy(l => l.Timestamp);
             }
@@ -63,7 +67,8 @@ namespace LogsCentral.Controllers
             }
 
             var sortBy = Request.Query["sortBy"].FirstOrDefault();
-
+            // Попробовать переделать в switch
+            // Перед проверкой приводить к единому регистру
             if (sortBy == "Level")
             {
                 query = logsViewModel.CurrentSortOrder
@@ -91,6 +96,7 @@ namespace LogsCentral.Controllers
                 query = logsViewModel.CurrentSortOrder ? query.OrderBy(l => l.Timestamp) : query.OrderByDescending(l => l.Timestamp);
             }
 
+            // Pagination
             int pageSize = 100;
             int page = int.TryParse(Request.Query["page"], out var p) ? p : 1;
             if (page < 1)
@@ -100,7 +106,10 @@ namespace LogsCentral.Controllers
             int totalLogs = await query.CountAsync();
             logsViewModel.TotalPages = (int)Math.Ceiling(totalLogs / (double)pageSize);
             logsViewModel.CurrentPage = page;
-            logsViewModel.Logs = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            logsViewModel.Logs = await query.Skip((page - 1) * pageSize)
+                                            .Take(pageSize)
+                                            .ToListAsync();
+            
             return View(logsViewModel);
         }
     }

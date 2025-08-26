@@ -41,7 +41,7 @@ namespace LogsCentral
                     sinkOptions: new MSSqlServerSinkOptions
                     {
                         TableName = "SerilogEvents",
-                        AutoCreateSqlTable = true,
+                        AutoCreateSqlTable = false,
                     },
                     columnOptions: new ColumnOptions(),
                     appConfiguration: builder.Configuration
