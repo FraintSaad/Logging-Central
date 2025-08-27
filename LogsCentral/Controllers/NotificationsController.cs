@@ -1,84 +1,38 @@
-﻿using Data.Context;
-using Data.Entities;
-using Data.Models;
-using LogsCentral.Services;
-using LogsCentral.ViewModels;
+﻿using LogsCentral.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NuGet.Packaging.Signing;
-using System.Net;
-using System.Net.Mail;
 
 namespace LogsCentral.Controllers
 {
-    // Make this notifications
     [Route("notifications")]
     public class NotificationsController : Controller
     {
-        private readonly LogsDbContext _dbContext;
-        private readonly EmailService _emailService;
+        private readonly NotificationsPageViewModel _viewModel;
 
-        public NotificationsController(LogsDbContext dbContext, EmailService emailService)
+        public NotificationsController(NotificationsPageViewModel viewModel)
         {
-            _dbContext = dbContext;
-            _emailService = emailService;
+            _viewModel = viewModel;
         }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            _dbContext.SerilogEvents.AddRange(new[]
-            {
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 1" },
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 2" },
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 3" },
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 4" },
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 5" }
-            });
-            _dbContext.SaveChanges();
+            await _viewModel.SeedTestLogsAsync();
 
-            // Rename to notificationEntities
-            var configs = await _dbContext.NotificationRules.ToListAsync();
-
-            var models = configs.Select(c => new NotificationRuleViewModel
-            {
-                Period = c.Period,
-                CreatedAt = c.CreatedAt,
-                Threshold = c.Threshold,
-                LogLevels = c.LogLevel,
-                Email = c.Email
-            }).ToList();
-
-            // Send NotificationsPageModel
+            var models = await _viewModel.GetAllAsync();
             return View(models);
         }
+
         [HttpPost("add")]
         public async Task<IActionResult> Add(NotificationRuleViewModel model, string[] selectedLevels)
         {
-            var entity = new NotificationsRuleEntity
-            {
-                Period = model.Period,
-                CreatedAt = DateTime.Now,
-                Threshold = model.Threshold,
-                LogLevel = string.Join(",", selectedLevels),
-                Email = model.Email
-            };
-
-            _dbContext.NotificationRules.Add(entity);
-            await _dbContext.SaveChangesAsync();
-
+            await _viewModel.AddAsync(model, selectedLevels);
             return RedirectToAction("Index");
         }
 
         [HttpPost("delete/{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var item = await _dbContext.NotificationRules.FindAsync(id);
-            if (item != null)
-            {
-                _dbContext.NotificationRules.Remove(item);
-                await _dbContext.SaveChangesAsync();
-            }
-
+            await _viewModel.DeleteAsync(id);
             return RedirectToAction("Index");
         }
     }

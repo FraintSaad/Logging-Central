@@ -39,6 +39,8 @@ namespace LogsCentral
             builder.Services.AddSingleton(emailSettings);
             builder.Services.AddScoped<EmailService>();
             builder.Services.AddScoped<LogsViewModel>();
+            builder.Services.AddScoped<NotificationsPageViewModel>();
+            builder.Services.AddScoped<StatusPageViewModel>();
             builder.Services.AddScoped<NotificationsSenderService>();
             builder.Services.AddHostedService<NotificationsSenderBackgroundJob>();
 
