@@ -39,7 +39,7 @@ namespace LogsCentral.Controllers
             // Rename to notificationEntities
             var configs = await _dbContext.NotificationRules.ToListAsync();
 
-            var models = configs.Select(c => new NotificationViewModel
+            var models = configs.Select(c => new NotificationRuleViewModel
             {
                 Period = c.Period,
                 CreatedAt = c.CreatedAt,
@@ -52,7 +52,7 @@ namespace LogsCentral.Controllers
             return View(models);
         }
         [HttpPost("add")]
-        public async Task<IActionResult> Add(NotificationViewModel model, string[] selectedLevels)
+        public async Task<IActionResult> Add(NotificationRuleViewModel model, string[] selectedLevels)
         {
             var entity = new NotificationsRuleEntity
             {

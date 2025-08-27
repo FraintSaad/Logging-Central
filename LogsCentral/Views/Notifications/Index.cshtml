@@ -1,28 +1,28 @@
 ﻿@using LogsCentral.ViewModels
-@model List<NotificationViewModel>
+@model List<NotificationRuleViewModel>
 @{
     ViewData["Title"] = "Notifications";
 }
 
-<h2>Уведомления</h2>
-<p>Если за последние X минут было Y количество логов с Z уровнем, тогда отослать уведомления на указанные почтовые ящики</p>
+<h2>Notifications</h2>
+<p>If there were Y logs with Z level in the last X minutes, then send notifications to the specified mailboxes</p>
 <form asp-action="Add" method="post">
-    <label>Минут:</label>
+    <label>Minutes:</label>
     <input type="number" name="Period" required />
 
-    <label>Количество логов:</label>
+    <label>Logs count:</label>
     <input type="number" name="ThrashHold" required />
 
-    <label>Уровень логов:</label>
+    <label>Logs level:</label>
     <input type="checkbox" name="selectedLevels" value="Debug" /> Debug
     <input type="checkbox" name="selectedLevels" value="Info" /> Info
     <input type="checkbox" name="selectedLevels" value="Warning" /> Warning
     <input type="checkbox" name="selectedLevels" value="Error" /> Error
 
-    <label>Почта:</label>
+    <label>Mail:</label>
     <input type="email" name="Email" multiple required />
 
-    <button type="submit">Добавить</button>
+    <button type="submit">Add</button>
 </form>
 
 <hr />
@@ -30,12 +30,12 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Период</th>
-            <th>Порог</th>
-            <th>Уровни</th>
+            <th>Minutes</th>
+            <th>Threshold</th>
+            <th>Levels</th>
             <th>Email</th>
-            <th>Дата создания</th>
-            <th>Действия</th>
+            <th>Created At</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -49,7 +49,7 @@
                 <td>@n.CreatedAt</td>
                 <td>
                     <form asp-action="Delete" asp-route-id="@n.Id" method="post" style="display:inline;">
-                        <button type="submit">Удалить</button>
+                        <button type="submit">Delete</button>
                     </form>
                 </td>
             </tr>

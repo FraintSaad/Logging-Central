@@ -1,6 +1,6 @@
 ﻿namespace LogsCentral.ViewModels
 {
-    public class NotificationViewModel
+    public class NotificationRuleViewModel
     {
         public int Id { get; set; }
         public int Period { get; set; }

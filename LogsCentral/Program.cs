@@ -3,6 +3,7 @@ using LogsCentral.Jobs;
 using LogsCentral.Models;
 using LogsCentral.Services;
 using LogsCentral.Settings;
+using LogsCentral.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -37,6 +38,7 @@ namespace LogsCentral
 
             builder.Services.AddSingleton(emailSettings);
             builder.Services.AddScoped<EmailService>();
+            builder.Services.AddScoped<LogsViewModel>();
             builder.Services.AddScoped<NotificationsSenderService>();
             builder.Services.AddHostedService<NotificationsSenderBackgroundJob>();
 
