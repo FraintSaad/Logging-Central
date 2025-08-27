@@ -16,24 +16,24 @@ public class NotificationsSenderService
 
     public async Task ProcessNotificationsAsync(CancellationToken cancellationToken = default)
     {
-        var notifications = await _db.Notifications.ToListAsync(cancellationToken);
+        var notifications = await _db.NotificationRules.ToListAsync(cancellationToken);
 
         foreach (var config in notifications)
         {
             var since = DateTime.Now.AddMinutes(-config.Period);
-            var logLevels = config.LogLevels.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var logLevels = config.LogLevel.Split(',', StringSplitOptions.RemoveEmptyEntries);
 
             var alreadySentIds = _db.SentNotifications
-                                   .Where(ln => ln.NotificationId == config.Id)
+                                   .Where(ln => ln.RuleId == config.Id)
                                    .Select(ln => ln.LogId)
                                    .ToHashSet();
 
-            var logs = await _db.Logs
+            var logs = await _db.SerilogEvents
                                .Where(l => l.Timestamp >= since &&
                                       logLevels.Contains(l.Level) &&
                                       !alreadySentIds.Contains(l.Id)).ToListAsync(cancellationToken);
 
-            if (logs.Count >= config.ThrashHold)
+            if (logs.Count >= config.Threshold)
             {
                 var body = string.Join("\n", logs.Select(l => $"{l.Timestamp}: {l.Level} - {l.Message}"));
                 _emailService.Send(config.Email,
@@ -44,7 +44,7 @@ public class NotificationsSenderService
                     logs.Select(l => new SentNotificationEntity
                     {
                         LogId = l.Id,
-                        NotificationId = config.Id,
+                        RuleId = config.Id,
                         SentAt = DateTime.Now
                     })
                 );

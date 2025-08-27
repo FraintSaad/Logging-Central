@@ -50,7 +50,7 @@ namespace LogsCentral.Controllers
                 selectedLevels.Add("Error");
             }
 
-            var query = _dbContext.Logs.AsQueryable();
+            var query = _dbContext.SerilogEvents.AsQueryable();
 
             if (selectedLevels.Count > 0)
             {

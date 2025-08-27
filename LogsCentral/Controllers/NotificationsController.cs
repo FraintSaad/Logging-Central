@@ -26,7 +26,7 @@ namespace LogsCentral.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            _dbContext.Logs.AddRange(new[]
+            _dbContext.SerilogEvents.AddRange(new[]
             {
                 new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 1" },
                 new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 2" },
@@ -37,14 +37,14 @@ namespace LogsCentral.Controllers
             _dbContext.SaveChanges();
 
             // Rename to notificationEntities
-            var configs = await _dbContext.Notifications.ToListAsync();
+            var configs = await _dbContext.NotificationRules.ToListAsync();
 
             var models = configs.Select(c => new NotificationViewModel
             {
                 Period = c.Period,
                 CreatedAt = c.CreatedAt,
-                Threshold = c.ThrashHold,
-                LogLevels = c.LogLevels,
+                Threshold = c.Threshold,
+                LogLevels = c.LogLevel,
                 Email = c.Email
             }).ToList();
 
@@ -54,16 +54,16 @@ namespace LogsCentral.Controllers
         [HttpPost("add")]
         public async Task<IActionResult> Add(NotificationViewModel model, string[] selectedLevels)
         {
-            var entity = new NotificationEntity
+            var entity = new NotificationsRuleEntity
             {
                 Period = model.Period,
                 CreatedAt = DateTime.Now,
-                ThrashHold = model.Threshold,
-                LogLevels = string.Join(",", selectedLevels),
+                Threshold = model.Threshold,
+                LogLevel = string.Join(",", selectedLevels),
                 Email = model.Email
             };
 
-            _dbContext.Notifications.Add(entity);
+            _dbContext.NotificationRules.Add(entity);
             await _dbContext.SaveChangesAsync();
 
             return RedirectToAction("Index");
@@ -72,10 +72,10 @@ namespace LogsCentral.Controllers
         [HttpPost("delete/{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var item = await _dbContext.Notifications.FindAsync(id);
+            var item = await _dbContext.NotificationRules.FindAsync(id);
             if (item != null)
             {
-                _dbContext.Notifications.Remove(item);
+                _dbContext.NotificationRules.Remove(item);
                 await _dbContext.SaveChangesAsync();
             }
 
