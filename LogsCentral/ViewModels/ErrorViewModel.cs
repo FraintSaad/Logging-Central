@@ -1,4 +1,4 @@
-namespace LogsCentral.Models
+namespace LogsCentral.ViewModels
 {
     public class ErrorViewModel
     {

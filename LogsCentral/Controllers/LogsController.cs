@@ -20,7 +20,7 @@ namespace LogsCentral.Controllers
         public async Task<IActionResult> Index()
         {
             // Перенести в DI
-            var logsViewModel = new LogsViewModel();
+            var logsViewModel = new LogsPageModel();
             // Зачем?
             _dbContext.SaveChanges();
 

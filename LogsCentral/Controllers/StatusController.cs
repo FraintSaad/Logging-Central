@@ -15,10 +15,10 @@ namespace LogsCentral.Controllers
             _db = db;
         }
 
-        [HttpGet("Status")]
+        [HttpGet]
         public async Task<IActionResult> Index(int? days)
         {
-            var vm = new StatusViewModel();
+            var vm = new StatusPageModel();
 
             var now = DateTime.Now;
 

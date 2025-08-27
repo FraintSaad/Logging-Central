@@ -1,8 +1,8 @@
 ﻿using Data.Context;
 using Data.Entities;
 using Data.Models;
-using LogsCentral.Models;
 using LogsCentral.Services;
+using LogsCentral.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Packaging.Signing;
@@ -12,7 +12,7 @@ using System.Net.Mail;
 namespace LogsCentral.Controllers
 {
     // Make this notifications
-    [Route("status")]
+    [Route("notifications")]
     public class NotificationsController : Controller
     {
         private readonly LogsDbContext _dbContext;
@@ -23,7 +23,7 @@ namespace LogsCentral.Controllers
             _dbContext = dbContext;
             _emailService = emailService;
         }
-        [HttpGet("notifications")]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             _dbContext.Logs.AddRange(new[]
@@ -39,11 +39,11 @@ namespace LogsCentral.Controllers
             // Rename to notificationEntities
             var configs = await _dbContext.Notifications.ToListAsync();
 
-            var models = configs.Select(c => new NotificationsViewModel
+            var models = configs.Select(c => new NotificationViewModel
             {
                 Period = c.Period,
                 CreatedAt = c.CreatedAt,
-                ThrashHold = c.ThrashHold,
+                Threshold = c.ThrashHold,
                 LogLevels = c.LogLevels,
                 Email = c.Email
             }).ToList();
@@ -52,13 +52,13 @@ namespace LogsCentral.Controllers
             return View(models);
         }
         [HttpPost("add")]
-        public async Task<IActionResult> Add(NotificationsViewModel model, string[] selectedLevels)
+        public async Task<IActionResult> Add(NotificationViewModel model, string[] selectedLevels)
         {
             var entity = new NotificationEntity
             {
                 Period = model.Period,
                 CreatedAt = DateTime.Now,
-                ThrashHold = model.ThrashHold,
+                ThrashHold = model.Threshold,
                 LogLevels = string.Join(",", selectedLevels),
                 Email = model.Email
             };

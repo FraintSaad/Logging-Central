@@ -2,8 +2,7 @@
 
 namespace LogsCentral.Models
 {
-    // Rename to LogsPageModel
-    public class LogsViewModel
+    public class LogsPageModel
     {
 
         public List<LogEntity> Logs { get; set; } = new List<LogEntity>();

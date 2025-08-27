@@ -1,7 +1,6 @@
 ﻿namespace LogsCentral.Models
 {
-    // Rename to StatusPageModel
-    public class StatusViewModel
+    public class StatusPageModel
     {
 
         public int LastDayCount { get; set; }
