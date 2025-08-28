@@ -6,12 +6,13 @@
 
 <h2>Notifications</h2>
 <p>If there were Y logs with Z level in the last X minutes, then send notifications to the specified mailboxes</p>
+
 <form asp-action="Add" method="post">
     <label>Minutes:</label>
     <input type="number" name="Period" required />
 
     <label>Logs count:</label>
-    <input type="number" name="ThrashHold" required />
+    <input type="number" name="Threshold" required />
 
     <label>Logs level:</label>
     <input type="checkbox" name="selectedLevels" value="Debug" /> Debug
@@ -35,18 +36,46 @@
             <th>Levels</th>
             <th>Email</th>
             <th>Created At</th>
-            <th>Actions</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var n in Model)
         {
-            <tr>
-                <td>@n.Period</td>
-                <td>@n.Threshold</td>
-                <td>@n.LogLevels</td>
-                <td>@n.Email</td>
-                <td>@n.CreatedAt</td>
+            <tr data-id="@n.Id">
+                <form asp-action="Edit" asp-route-id="@n.Id" method="post" class="edit-form">
+                <td>
+                    <span class="view-mode">@n.Period</span>
+                    <input type="number" name="Period" value="@n.Period" class="edit-mode" style="display:none;" />
+                    <input type="hidden" name="Id" value="@n.Id" />
+                </td>
+                <td>
+                    <span class="view-mode">@n.Threshold</span>
+                    <input type="number" name="Threshold" value="@n.Threshold" class="edit-mode" style="display:none;" />
+                </td>
+                <td>
+                    <span class="view-mode">@n.LogLevels</span>
+                    <div class="edit-mode" style="display:none;">
+                        <input type="checkbox" name="selectedLevels" value="Debug" @(n.LogLevels.Contains("Debug") ? "checked" : "") /> Debug
+                        <input type="checkbox" name="selectedLevels" value="Info" @(n.LogLevels.Contains("Info") ? "checked" : "") /> Info
+                        <input type="checkbox" name="selectedLevels" value="Warning" @(n.LogLevels.Contains("Warning") ? "checked" : "") /> Warning
+                        <input type="checkbox" name="selectedLevels" value="Error" @(n.LogLevels.Contains("Error") ? "checked" : "") /> Error
+                    </div>
+                </td>
+                <td>
+                    <span class="view-mode">@n.Email</span>
+                    <input type="email" name="Email" value="@n.Email" class="edit-mode" style="display:none;" />
+                </td>
+                <td>
+                    @n.CreatedAt
+                </td>
+                <td>
+
+                    <button type="button" class="edit-btn">Edit</button>
+                    <button type="submit" class="save-btn edit-mode" style="display:none;">Save</button>
+                </td>
+                </form>
                 <td>
                     <form asp-action="Delete" asp-route-id="@n.Id" method="post" style="display:inline;">
                         <button type="submit">Delete</button>
@@ -56,3 +85,16 @@
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".edit-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const row = this.closest("tr");
+                row.querySelectorAll(".view-mode").forEach(el => el.style.display = "none");
+                row.querySelectorAll(".edit-mode").forEach(el => el.style.display = "inline");
+                this.style.display = "none";
+            });
+        });
+    </script>
+}

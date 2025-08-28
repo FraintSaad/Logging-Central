@@ -17,10 +17,11 @@ namespace LogsCentral.ViewModels
 
         public async Task<List<NotificationRuleViewModel>> GetAllAsync()
         {
-            var configs = await _db.NotificationRules.ToListAsync();
+            var notificationRules = await _db.NotificationRules.ToListAsync();
 
-            return configs.Select(c => new NotificationRuleViewModel
+            return notificationRules.Select(c => new NotificationRuleViewModel
             {
+                Id = c.Id,
                 Period = c.Period,
                 CreatedAt = c.CreatedAt,
                 Threshold = c.Threshold,
@@ -43,13 +44,26 @@ namespace LogsCentral.ViewModels
             _db.NotificationRules.Add(entity);
             await _db.SaveChangesAsync();
         }
-
         public async Task DeleteAsync(int id)
         {
             var item = await _db.NotificationRules.FindAsync(id);
             if (item != null)
             {
                 _db.NotificationRules.Remove(item);
+                await _db.SaveChangesAsync();
+            }
+        }
+
+        public async Task EditAsync(NotificationRuleViewModel model, string[] selectedLevels)
+        {
+            var entity = await _db.NotificationRules.FindAsync(model.Id);
+            if (entity != null)
+            {
+                entity.Period = model.Period;
+                entity.Threshold = model.Threshold;
+                entity.LogLevel = string.Join(",", selectedLevels);
+                entity.Email = model.Email;
+
                 await _db.SaveChangesAsync();
             }
         }

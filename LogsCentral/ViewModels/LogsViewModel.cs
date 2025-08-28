@@ -14,15 +14,8 @@ namespace LogsCentral.ViewModels
             _dbContext = dbContext;
         }
 
-        public async Task<LogsPageModel> LoadAsync(
-            bool logLevelDebug,
-            bool logLevelInfo,
-            bool logLevelWarning,
-            bool logLevelError,
-            string? sortBy,
-            bool sortOrderAsc,
-            int page,
-            int pageSize = 100)
+        public async Task<LogsPageModel> LoadAsync(bool logLevelDebug, bool logLevelInfo, bool logLevelWarning,
+                                                   bool logLevelError, string? sortBy, bool sortOrderAsc, int page, int pageSize = 100)
         {
             var model = new LogsPageModel
             {

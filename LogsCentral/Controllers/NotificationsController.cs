@@ -35,5 +35,12 @@ namespace LogsCentral.Controllers
             await _viewModel.DeleteAsync(id);
             return RedirectToAction("Index");
         }
+
+        [HttpPost("edit/{id}")]
+        public async Task<IActionResult> EditAsync(NotificationRuleViewModel model, string[] selectedLevels)
+        {
+            await _viewModel.EditAsync(model, selectedLevels);
+            return RedirectToAction("Index");
+        }
     }
 }
