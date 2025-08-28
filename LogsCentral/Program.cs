@@ -41,9 +41,9 @@ namespace LogsCentral
             builder.Services.AddScoped<LogsViewModel>();
             builder.Services.AddScoped<NotificationsPageViewModel>();
             builder.Services.AddScoped<StatusPageViewModel>();
+            builder.Services.AddScoped<LivePageViewModel>();
             builder.Services.AddScoped<NotificationsSenderService>();
             builder.Services.AddHostedService<NotificationsSenderBackgroundJob>();
-
 
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

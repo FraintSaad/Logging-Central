@@ -37,8 +37,8 @@ public class NotificationsSenderService
             {
                 var body = string.Join("\n", logs.Select(l => $"{l.Timestamp}: {l.Level} - {l.Message}"));
                 _emailService.Send(config.Email,
-                    $"Логи за последние {config.Period} минут",
-                    $"Количество логов: {logs.Count}\n\n{body}");
+                    $"Logs for the last {config.Period} minutes",
+                    $"Logs count: {logs.Count}\n\n{body}");
 
                 _db.SentNotifications.AddRange(
                     logs.Select(l => new SentNotificationEntity

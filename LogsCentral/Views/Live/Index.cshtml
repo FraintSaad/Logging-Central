@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Live";
+}
+
+<h2>Live Logs</h2>
+
+<button id="addTestLogBtn">Добавить тестовый лог</button>
+
+<div>
+    <label>Filter by Level:</label>
+    <select id="levelFilter">
+        <option value="">All</option>
+        <option value="Debug">Debug</option>
+        <option value="Info">Info</option>
+        <option value="Warning">Warning</option>
+        <option value="Error">Error</option>
+    </select>
+
+    <table class="table" id="logs-table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Level</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+              document.getElementById("addTestLogBtn").addEventListener("click", function () 
+              {
+            fetch('/status/logs/live/add-test-log?level=Error&message=Тестовый+лог', { method: 'POST' });
+              });
+        function loadLogs() {
+            let level = $("#levelFilter").val();
+            $.getJSON("/status/logs/live/data", { level: level }, function (data) {
+                let tbody = $("#logs-table tbody");
+                tbody.empty();
+                data.forEach(log => {
+                    let row = `<tr>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.level}</td>
+                        <td>${log.message}</td>
+                    </tr>`;
+                    tbody.append(row);
+                });
+            });
+        }
+
+        $("#levelFilter").on("change", loadLogs);
+
+        setInterval(loadLogs, 3000);
+        loadLogs();
+    </script>
+}
