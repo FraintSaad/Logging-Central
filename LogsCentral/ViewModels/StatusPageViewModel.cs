@@ -1,5 +1,4 @@
 ﻿using Data.Context;
-using LogsCentral.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LogsCentral.ViewModels

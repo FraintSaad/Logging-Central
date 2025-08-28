@@ -1,7 +1,5 @@
-﻿using Azure.Core;
-using Data.Context;
+﻿using Data.Context;
 using LogsCentral.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LogsCentral.ViewModels

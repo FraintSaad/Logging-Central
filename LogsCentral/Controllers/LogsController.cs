@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using LogsCentral.ViewModels;
+﻿using LogsCentral.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
 [Route("status")]

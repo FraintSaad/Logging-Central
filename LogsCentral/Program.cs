@@ -1,6 +1,5 @@
 using Data.Context;
 using LogsCentral.Jobs;
-using LogsCentral.Models;
 using LogsCentral.Services;
 using LogsCentral.Settings;
 using LogsCentral.ViewModels;
@@ -11,25 +10,12 @@ using Serilog.Sinks.MSSqlServer;
 
 namespace LogsCentral
 {
-    /* TODO
-     * 
-     * Have XPageModel classes for each View
-     * Move all ViewModels into a ViewModels folder
-     * Create NotificationsPageModel for Notifications View
-     * Remove Home view and controller
-     * Translate to English
-     * Add ability to edit notification configurations
-     * Rename Notifications to NotificationRules (controller, view, db table, entity)
-     * Rename NotificationsViewModel to NotificationRuleViewModel
-     * 
-    */
     public class Program
     {
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var emailSettings = new EmailSettings();

@@ -1,7 +1,6 @@
 ﻿using Data.Context;
 using Data.Entities;
 using Data.Models;
-using LogsCentral.ViewModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace LogsCentral.ViewModels
