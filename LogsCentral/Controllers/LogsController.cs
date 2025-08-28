@@ -23,7 +23,7 @@ public class LogsController : Controller
         bool sortOrderAsc = bool.TryParse(Request.Query["sortOrder"], out var sort) && sort;
         int page = int.TryParse(Request.Query["page"], out var p) ? p : 1;
 
-        var model = await _logsViewModel.LoadAsync(logLevelDebug, logLevelInfo, 
+        var model = await _logsViewModel.LoadAsync(logLevelDebug, logLevelInfo,
                                                    logLevelWarning, logLevelError,
                                                    sortBy, sortOrderAsc, page);
         return View(model);

@@ -71,11 +71,12 @@
                 borderWidth: 1
             }]
         };
-        const config = {
+                const config = {
             type: 'pie',
             data: data,
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: { position: 'top' }
                 }

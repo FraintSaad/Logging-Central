@@ -4,7 +4,6 @@ namespace LogsCentral.Models
 {
     public class LogsPageModel
     {
-
         public List<LogEntity> Logs { get; set; } = new List<LogEntity>();
         public bool CurrentSortOrder { get; set; } = false;
         public bool LogLevelDebug { get; set; } = true;

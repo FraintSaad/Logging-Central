@@ -66,19 +66,5 @@ namespace LogsCentral.ViewModels
                 await _db.SaveChangesAsync();
             }
         }
-
-        public async Task SeedTestLogsAsync()
-        {
-            _db.SerilogEvents.AddRange(new[]
-            {
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 1" },
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 2" },
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 3" },
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 4" },
-                new LogEntity { Timestamp = DateTime.Now, Level = "Warning", Message = "Warning log 5" }
-            });
-
-            await _db.SaveChangesAsync();
-        }
     }
 }

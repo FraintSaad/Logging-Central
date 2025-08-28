@@ -16,8 +16,6 @@ namespace LogsCentral.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            await _viewModel.SeedTestLogsAsync();
-
             var models = await _viewModel.GetAllAsync();
             return View(models);
         }
