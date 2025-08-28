@@ -30,19 +30,33 @@ namespace LogsCentral.ViewModels
             }).ToList();
         }
 
-        public async Task AddAsync(NotificationRuleViewModel model, string[] selectedLevels)
+        public async Task AddAsync(NotificationRuleViewModel model, string selectedLevel)
         {
             var entity = new NotificationsRuleEntity
             {
                 Period = model.Period,
                 CreatedAt = DateTime.Now,
                 Threshold = model.Threshold,
-                LogLevel = string.Join(",", selectedLevels),
+                LogLevel = selectedLevel,
                 Email = model.Email
             };
 
             _db.NotificationRules.Add(entity);
             await _db.SaveChangesAsync();
+        }
+
+        public async Task EditAsync(NotificationRuleViewModel model, string selectedLevel)
+        {
+            var entity = await _db.NotificationRules.FindAsync(model.Id);
+            if (entity != null)
+            {
+                entity.Period = model.Period;
+                entity.Threshold = model.Threshold;
+                entity.LogLevel = selectedLevel;
+                entity.Email = model.Email;
+
+                await _db.SaveChangesAsync();
+            }
         }
         public async Task DeleteAsync(int id)
         {
@@ -50,20 +64,6 @@ namespace LogsCentral.ViewModels
             if (item != null)
             {
                 _db.NotificationRules.Remove(item);
-                await _db.SaveChangesAsync();
-            }
-        }
-
-        public async Task EditAsync(NotificationRuleViewModel model, string[] selectedLevels)
-        {
-            var entity = await _db.NotificationRules.FindAsync(model.Id);
-            if (entity != null)
-            {
-                entity.Period = model.Period;
-                entity.Threshold = model.Threshold;
-                entity.LogLevel = string.Join(",", selectedLevels);
-                entity.Email = model.Email;
-
                 await _db.SaveChangesAsync();
             }
         }

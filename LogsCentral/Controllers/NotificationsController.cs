@@ -23,23 +23,24 @@ namespace LogsCentral.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> Add(NotificationRuleViewModel model, string[] selectedLevels)
+        public async Task<IActionResult> Add(NotificationRuleViewModel model, string selectedLevel)
         {
-            await _viewModel.AddAsync(model, selectedLevels);
+            await _viewModel.AddAsync(model, selectedLevel);
             return RedirectToAction("Index");
         }
+
+        [HttpPost("edit/{id}")]
+        public async Task<IActionResult> EditAsync(NotificationRuleViewModel model, string selectedLevel)
+        {
+            await _viewModel.EditAsync(model, selectedLevel);
+            return RedirectToAction("Index");
+        }
+
 
         [HttpPost("delete/{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             await _viewModel.DeleteAsync(id);
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost("edit/{id}")]
-        public async Task<IActionResult> EditAsync(NotificationRuleViewModel model, string[] selectedLevels)
-        {
-            await _viewModel.EditAsync(model, selectedLevels);
             return RedirectToAction("Index");
         }
     }
