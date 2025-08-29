@@ -13,7 +13,7 @@ namespace LogsCentral.Services
             _settings = settings;
         }
 
-        public void Send(string toEmails, string subject, string body)
+        public virtual void Send(string toEmails, string subject, string body)
         {
             using (var client = new SmtpClient("smtp.gmail.com", 587))
             {
