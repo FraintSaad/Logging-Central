@@ -1,17 +1,87 @@
-﻿@model StatusViewModel
+﻿@model LogsCentral.ViewModels.StatusPageViewModel
 
-<h2>Статистика логов</h2>
+<h2 class="mb-3">Logs stats</h2>
 
-<p>Логи за последние 24 часа: @Model.LastDayCount</p>
-<p>Логи за последнюю неделю: @Model.LastWeekCount</p>
-<p>Логи за последний месяц: @Model.LastMonthCount</p>
+<div class="row mb-3">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary mb-2">
+            <div class="card-body">
+                <h5 class="card-title">Last day</h5>
+                <p class="card-text">@Model.LastDayCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success mb-2">
+            <div class="card-body">
+                <h5 class="card-title">Last week</h5>
+                <p class="card-text">@Model.LastWeekCount</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning mb-2">
+            <div class="card-body">
+                <h5 class="card-title">Last month</h5>
+                <p class="card-text">@Model.LastMonthCount</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<form method="get">
-    <label>Выбрать период (дней): <input type="number" name="days" value="@Model.SelectedDays" /></label>
-    <button type="submit">Применить</button>
+<form method="get" class="mb-3 row g-2 align-items-center">
+    <div class="col-auto">
+        <label class="form-label" for="daysInput">Choose period (days):</label>
+        <input type="number" class="form-control" id="daysInput" name="days" value="@Model.SelectedDays" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary mt-4">Apply</button>
+    </div>
 </form>
 
-<h3>Всего логов за выбранный период: @Model.SelectedPeriodCount</h3>
+<h3>Total logs for the selected period: @Model.SelectedPeriodCount</h3>
 
-<canvas id="logsChart" width="400" height="400"></canvas>
+<div class="card mt-3">
+    <div class="card-body">
+        <canvas id="logsChart" width="400" height="400"></canvas>
+    </div>
+</div>
 
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('logsChart').getContext('2d');
+        const data = {
+            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LogsByLevel.Keys)),
+            datasets: [{
+                label: 'Logs count by level',
+                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LogsByLevel.Values)),
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 206, 86, 0.7)',
+                    'rgba(255, 99, 132, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+                const config = {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' }
+                }
+            }
+        };
+        new Chart(ctx, config);
+    </script>
+}

@@ -9,10 +9,8 @@ namespace Data.Entities
     public class SentNotificationEntity
     {
         public int Id { get; set; }
-
         public int LogId { get; set; }
-        // Rename to NotrificationRuleId
-        public int NotificationId { get; set; }
+        public int RuleId { get; set; }
         public DateTime SentAt { get; set; }
     }
 }
