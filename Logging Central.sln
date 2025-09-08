@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogsCentral", "LogsCentral\LogsCentral.csproj", "{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logs Test Console", "Logs Test Console\Logs Test Console.csproj", "{0A41FBF6-96C5-4B77-984A-85B1ECBA1248}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1908F49E-3276-4FAF-AFC2-1EC20C9C9CE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A41FBF6-96C5-4B77-984A-85B1ECBA1248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A41FBF6-96C5-4B77-984A-85B1ECBA1248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A41FBF6-96C5-4B77-984A-85B1ECBA1248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A41FBF6-96C5-4B77-984A-85B1ECBA1248}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

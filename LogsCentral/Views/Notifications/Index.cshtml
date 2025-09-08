@@ -21,7 +21,7 @@
     <div class="mb-2">
         <label class="form-label">Logs level:</label><br />
         <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Debug" /> Debug
-        <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Info" /> Info
+        <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Information" /> Information
         <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Warning" /> Warning
         <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Error" /> Error
     </div>
@@ -67,7 +67,7 @@
                         <span class="view-mode">@n.LogLevels</span>
                         <div class="edit-mode" style="display:none;">
                             <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Debug" @(n.LogLevels == "Debug" ? "checked" : "") /> Debug
-                            <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Info" @(n.LogLevels == "Info" ? "checked" : "") /> Info
+                            <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Information" @(n.LogLevels == "Information" ? "checked" : "") /> Information
                             <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Warning" @(n.LogLevels == "Warning" ? "checked" : "") /> Warning
                             <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Error" @(n.LogLevels == "Error" ? "checked" : "") /> Error
                         </div>
