@@ -10,45 +10,47 @@
     var sortExceptionHref = QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["sortBy"] = "Exception" });
 }
 
-<h2>Последние логи</h2>
-<form action="/status/logs" method="get">
-    <label><input type="checkbox" name="logLevelDebug" @(Model.LogLevelDebug ? "checked" : "") /> Debug</label>
-    <label><input type="checkbox" name="logLevelInfo" @(Model.LogLevelInfo ? "checked" : "") /> Information</label>
-    <label><input type="checkbox" name="logLevelWarning" @(Model.LogLevelWarning ? "checked" : "") /> Warning</label>
-    <label><input type="checkbox" name="logLevelError" @(Model.LogLevelError ? "checked" : "") /> Error</label>
-    <input type="submit" value="Применить" />
+<h2 class="mb-3">Last logs</h2>
+
+<form class="mb-3" action="/status/logs" method="get">
+    <label class="form-check-label me-2"><input class="form-check-input me-1" type="checkbox" name="logLevelDebug" @(Model.LogLevelDebug ? "checked" : "") /> Debug</label>
+    <label class="form-check-label me-2"><input class="form-check-input me-1" type="checkbox" name="logLevelInfo" @(Model.LogLevelInfo ? "checked" : "") /> Information</label>
+    <label class="form-check-label me-2"><input class="form-check-input me-1" type="checkbox" name="logLevelWarning" @(Model.LogLevelWarning ? "checked" : "") /> Warning</label>
+    <label class="form-check-label me-2"><input class="form-check-input me-1" type="checkbox" name="logLevelError" @(Model.LogLevelError ? "checked" : "") /> Error</label>
+    <input class="btn btn-primary btn-sm ms-2" type="submit" value="Apply" />
 </form>
 
-<table class="table" height="500">
-    <thead>
-
-        <tr>
-            <th><a href="@sortTimeHref">Время</a></th>
-            <th><a href="@sortLevelHref">Уровень</a></th>
-            <th><a href="@sortMessageHref">Сообщение</a></th>
-            <th><a href="@sortExceptionHref">Exception</a></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var log in Model.Logs)
-        {
+<div class="table-responsive">
+    <table class="table table-striped table-hover" height="500">
+        <thead class="table-dark">
             <tr>
-                <td>@log.Timestamp</td>
-                <td>@log.Level</td>
-                <td>@log.Message</td>
-                <td>@log.Exception</td>
+                <th><a class="text-white text-decoration-none" href="@sortTimeHref">Time</a></th>
+                <th><a class="text-white text-decoration-none" href="@sortLevelHref">Level</a></th>
+                <th><a class="text-white text-decoration-none" href="@sortMessageHref">Message</a></th>
+                <th><a class="text-white text-decoration-none" href="@sortExceptionHref">Exception</a></th>
             </tr>
-        }
-    </tbody>
-</table>
-<nav>
-    <ul class="pagination">
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Logs)
+            {
+                <tr>
+                    <td>@log.Timestamp</td>
+                    <td>@log.Level</td>
+                    <td>@log.Message</td>
+                    <td>@log.Exception</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav aria-label="Logs pagination">
+    <ul class="pagination justify-content-center">
         @if (Model.CurrentPage > 1)
         {
             <li class="page-item">
-                <a class="page-link"
-                   href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = (Model.CurrentPage - 1).ToString() })">
-                    Предыдущая
+                <a class="page-link" href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = (Model.CurrentPage - 1).ToString() })">
+                    Previous
                 </a>
             </li>
         }
@@ -56,8 +58,7 @@
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
             <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                <a class="page-link"
-                   href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = i.ToString() })">
+                <a class="page-link" href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = i.ToString() })">
                     @i
                 </a>
             </li>
@@ -66,9 +67,8 @@
         @if (Model.CurrentPage < Model.TotalPages)
         {
             <li class="page-item">
-                <a class="page-link"
-                   href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = (Model.CurrentPage + 1).ToString() })">
-                    Следующая
+                <a class="page-link" href="@QueryHelpers.AddQueryString(Context.Request.Path, new Dictionary<string, string>(dict) { ["page"] = (Model.CurrentPage + 1).ToString() })">
+                    Next
                 </a>
             </li>
         }

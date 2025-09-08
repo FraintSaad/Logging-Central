@@ -1,9 +1,4 @@
-﻿using Data.Context;
-using Data.Entities;
-using LogsCentral.Services;
-using Microsoft.EntityFrameworkCore;
-
-namespace LogsCentral.Jobs
+﻿namespace LogsCentral.Jobs
 {
     public class NotificationsSenderBackgroundJob : BackgroundService
     {

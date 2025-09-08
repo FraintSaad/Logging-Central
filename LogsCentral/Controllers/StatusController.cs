@@ -1,41 +1,23 @@
-﻿using Data.Context;
-using LogsCentral.Models;
+﻿using LogsCentral.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace LogsCentral.Controllers
 {
     [Route("status")]
     public class StatusController : Controller
     {
-        private readonly LogsDbContext _db;
+        private readonly StatusPageViewModel _viewModel;
 
-        public StatusController(LogsDbContext db)
+        public StatusController(StatusPageViewModel viewModel)
         {
-            _db = db;
+            _viewModel = viewModel;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(int? days)
         {
-            var vm = new StatusPageModel();
-
-            var now = DateTime.Now;
-
-            vm.LastDayCount = await _db.Logs.CountAsync(l => l.Timestamp >= now.AddDays(-1));
-            vm.LastWeekCount = await _db.Logs.CountAsync(l => l.Timestamp >= now.AddDays(-7));
-            vm.LastMonthCount = await _db.Logs.CountAsync(l => l.Timestamp >= now.AddMonths(-1));
-
-            vm.SelectedDays = days ?? 7;
-            var fromDate = now.AddDays(-vm.SelectedDays);
-
-            var logs = await _db.Logs.Where(l => l.Timestamp >= fromDate).ToListAsync();
-
-            vm.LogsByLevel = logs.GroupBy(l => l.Level).ToDictionary(g => g.Key, g => g.Count());
-
-            vm.SelectedPeriodCount = logs.Count;
-
-            return View(vm);
+            await _viewModel.LoadAsync(days);
+            return View(_viewModel);
         }
     }
 }

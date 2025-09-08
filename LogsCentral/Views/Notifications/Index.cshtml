@@ -1,58 +1,107 @@
 ﻿@using LogsCentral.ViewModels
-@model List<NotificationViewModel>
+@model List<NotificationRuleViewModel>
 @{
     ViewData["Title"] = "Notifications";
 }
 
-<h2>Уведомления</h2>
-<p>Если за последние X минут было Y количество логов с Z уровнем, тогда отослать уведомления на указанные почтовые ящики</p>
-<form asp-action="Add" method="post">
-    <label>Минут:</label>
-    <input type="number" name="Period" required />
+<h2>Notifications</h2>
+<p>If there were Y logs with Z level in the last X minutes, then send notifications to the specified mailboxes</p>
 
-    <label>Количество логов:</label>
-    <input type="number" name="ThrashHold" required />
+<form asp-action="Add" method="post" class="mb-3">
+    <div class="mb-2">
+        <label class="form-label">Minutes:</label>
+        <input type="number" name="Period" class="form-control form-control-sm" required />
+    </div>
 
-    <label>Уровень логов:</label>
-    <input type="checkbox" name="selectedLevels" value="Debug" /> Debug
-    <input type="checkbox" name="selectedLevels" value="Info" /> Info
-    <input type="checkbox" name="selectedLevels" value="Warning" /> Warning
-    <input type="checkbox" name="selectedLevels" value="Error" /> Error
+    <div class="mb-2">
+        <label class="form-label">Logs count:</label>
+        <input type="number" name="Threshold" class="form-control form-control-sm" required />
+    </div>
 
-    <label>Почта:</label>
-    <input type="email" name="Email" multiple required />
+    <div class="mb-2">
+        <label class="form-label">Logs level:</label><br />
+        <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Debug" /> Debug
+        <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Info" /> Info
+        <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Warning" /> Warning
+        <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Error" /> Error
+    </div>
 
-    <button type="submit">Добавить</button>
+    <div class="mb-2">
+        <label class="form-label">Mail:</label>
+        <input type="email" name="Email" multiple class="form-control form-control-sm" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-sm">Add</button>
 </form>
 
 <hr />
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Период</th>
-            <th>Порог</th>
-            <th>Уровни</th>
-            <th>Email</th>
-            <th>Дата создания</th>
-            <th>Действия</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var n in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
             <tr>
-                <td>@n.Period</td>
-                <td>@n.Threshold</td>
-                <td>@n.LogLevels</td>
-                <td>@n.Email</td>
-                <td>@n.CreatedAt</td>
-                <td>
-                    <form asp-action="Delete" asp-route-id="@n.Id" method="post" style="display:inline;">
-                        <button type="submit">Удалить</button>
-                    </form>
-                </td>
+                <th>Minutes</th>
+                <th>Threshold</th>
+                <th>Levels</th>
+                <th>Email</th>
+                <th>Created At</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var n in Model)
+            {
+                <tr data-id="@n.Id">
+                    <form asp-action="Edit" asp-route-id="@n.Id" method="post" class="edit-form">
+                    <td>
+                        <span class="view-mode">@n.Period</span>
+                        <input type="number" name="Period" value="@n.Period" class="form-control form-control-sm edit-mode" style="display:none;" />
+                        <input type="hidden" name="Id" value="@n.Id" />
+                    </td>
+                    <td>
+                        <span class="view-mode">@n.Threshold</span>
+                        <input type="number" name="Threshold" value="@n.Threshold" class="form-control form-control-sm edit-mode" style="display:none;" />
+                    </td>
+                    <td>
+                        <span class="view-mode">@n.LogLevels</span>
+                        <div class="edit-mode" style="display:none;">
+                            <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Debug" @(n.LogLevels == "Debug" ? "checked" : "") /> Debug
+                            <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Info" @(n.LogLevels == "Info" ? "checked" : "") /> Info
+                            <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Warning" @(n.LogLevels == "Warning" ? "checked" : "") /> Warning
+                            <input class="form-check-input me-1" type="radio" name="selectedLevel" value="Error" @(n.LogLevels == "Error" ? "checked" : "") /> Error
+                        </div>
+                    </td>
+                    <td>
+                        <span class="view-mode">@n.Email</span>
+                        <input type="email" name="Email" value="@n.Email" class="form-control form-control-sm edit-mode" style="display:none;" />
+                    </td>
+                    <td>@n.CreatedAt</td>
+                    <td>
+                        <button type="button" class="btn btn-secondary btn-sm edit-btn">Edit</button>
+                        <button type="submit" class="btn btn-success btn-sm save-btn edit-mode" style="display:none;">Save</button>
+                    </td>
+                    </form>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@n.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".edit-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+                const row = this.closest("tr");
+                row.querySelectorAll(".view-mode").forEach(el => el.style.display = "none");
+                row.querySelectorAll(".edit-mode").forEach(el => el.style.display = "inline-block");
+                this.style.display = "none";
+            });
+        });
+    </script>
+}

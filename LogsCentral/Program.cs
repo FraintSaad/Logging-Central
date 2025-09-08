@@ -1,8 +1,8 @@
 using Data.Context;
 using LogsCentral.Jobs;
-using LogsCentral.Models;
 using LogsCentral.Services;
 using LogsCentral.Settings;
+using LogsCentral.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
@@ -10,25 +10,12 @@ using Serilog.Sinks.MSSqlServer;
 
 namespace LogsCentral
 {
-    /* TODO
-     * 
-     * Have XPageModel classes for each View
-     * Move all ViewModels into a ViewModels folder
-     * Create NotificationsPageModel for Notifications View
-     * Remove Home view and controller
-     * Translate to English
-     * Add ability to edit notification configurations
-     * Rename Notifications to NotificationRules (controller, view, db table, entity)
-     * Rename NotificationsViewModel to NotificationRuleViewModel
-     * 
-    */
     public class Program
     {
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var emailSettings = new EmailSettings();
@@ -37,9 +24,12 @@ namespace LogsCentral
 
             builder.Services.AddSingleton(emailSettings);
             builder.Services.AddScoped<EmailService>();
+            builder.Services.AddScoped<LogsViewModel>();
+            builder.Services.AddScoped<NotificationsPageViewModel>();
+            builder.Services.AddScoped<StatusPageViewModel>();
+            builder.Services.AddScoped<LivePageViewModel>();
             builder.Services.AddScoped<NotificationsSenderService>();
             builder.Services.AddHostedService<NotificationsSenderBackgroundJob>();
-
 
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

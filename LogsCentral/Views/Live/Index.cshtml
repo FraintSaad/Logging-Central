@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Live";
+}
+
+<h2 class="mb-3">Live Logs</h2>
+
+<div class="mb-3">
+    <button id="addTestLogBtn" class="btn btn-danger">Add Test Log</button>
+</div>
+
+<div class="mb-3 row g-2 align-items-center">
+    <div class="col-auto">
+        <label for="levelFilter" class="form-label">Filter by Level:</label>
+        <select id="levelFilter" class="form-select">
+            <option value="">All</option>
+            <option value="Debug">Debug</option>
+            <option value="Info">Info</option>
+            <option value="Warning">Warning</option>
+            <option value="Error">Error</option>
+        </select>
+    </div>
+</div>
+
+<table class="table table-striped table-bordered" id="logs-table">
+    <thead class="table-dark">
+        <tr>
+            <th>Time</th>
+            <th>Level</th>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        document.getElementById("addTestLogBtn").addEventListener("click", function () {
+            fetch('/status/logs/live/add-test-log?level=Error&message=Test+log', { method: 'POST' });
+        });
+
+        function loadLogs() {
+            let level = $("#levelFilter").val();
+            $.getJSON("/status/logs/live/data", { level: level }, function (data) {
+                let tbody = $("#logs-table tbody");
+                tbody.empty();
+                data.forEach(log => {
+                    let row = `<tr>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.level}</td>
+                        <td>${log.message}</td>
+                    </tr>`;
+                    tbody.append(row);
+                });
+            });
+        }
+
+        $("#levelFilter").on("change", loadLogs);
+
+        setInterval(loadLogs, 3000);
+        loadLogs();
+    </script>
+}
