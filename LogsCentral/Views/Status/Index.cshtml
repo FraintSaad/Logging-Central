@@ -1,87 +1,272 @@
 ﻿@model LogsCentral.ViewModels.StatusPageViewModel
 
-<h2 class="mb-3">Logs stats</h2>
+@{
+    // Prepare data for the chart
+    var levelLabels = Model.LogsByLevel?.Keys?.ToList() ?? new List<string>();
+    var levelValues = Model.LogsByLevel?.Values?.ToList() ?? new List<int>();
 
-<div class="row mb-3">
-    <div class="col-md-4">
-        <div class="card text-white bg-primary mb-2">
-            <div class="card-body">
-                <h5 class="card-title">Last day</h5>
-                <p class="card-text">@Model.LastDayCount</p>
+    // Fallbacks
+    int selectedDays = Model.SelectedDays > 0 ? Model.SelectedDays : 1;
+
+    // Helper to JSON-encode arrays for JS safely
+    string labelsJson = System.Text.Json.JsonSerializer.Serialize(levelLabels);
+    string valuesJson = System.Text.Json.JsonSerializer.Serialize(levelValues);
+}
+
+<div class="container py-3">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-3">
+        <div>
+            <h2 class="mb-1">Logs stats</h2>
+            <div class="text-muted small">Interactive overview • Click a slice to drill into logs</div>
+        </div>
+
+        <!-- Time range controls (local time for convenience) -->
+        <div class="d-flex flex-wrap align-items-end gap-2">
+            <div>
+                <label class="form-label mb-1 small">Start (local)</label>
+                <input id="range-start" type="datetime-local" class="form-control" />
+            </div>
+            <div>
+                <label class="form-label mb-1 small">End (local)</label>
+                <input id="range-end" type="datetime-local" class="form-control" />
+            </div>
+
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                    Quick range
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" id="quick-range">
+                    <li><button class="dropdown-item" data-mins="15">Last 15 min</button></li>
+                    <li><button class="dropdown-item" data-mins="60">Last 1 hour</button></li>
+                    <li><button class="dropdown-item" data-mins="180">Last 3 hours</button></li>
+                    <li><button class="dropdown-item" data-mins="720">Last 12 hours</button></li>
+                    <li><button class="dropdown-item" data-mins="1440">Last 24 hours</button></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li><button class="dropdown-item" id="quick-selected-days">Selected days (@selectedDays)</button></li>
+                </ul>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-success mb-2">
-            <div class="card-body">
-                <h5 class="card-title">Last week</h5>
-                <p class="card-text">@Model.LastWeekCount</p>
+
+    <!-- Stat cards -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-4">
+            <div class="card text-white bg-primary border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Last day</h5>
+                    <p class="display-6 fw-semibold mb-3">@Model.LastDayCount</p>
+                    <button class="btn btn-light mt-auto open-logs-range" data-days="1">
+                        View logs for last day
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-white bg-success border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Last week</h5>
+                    <p class="display-6 fw-semibold mb-3">@Model.LastWeekCount</p>
+                    <button class="btn btn-light mt-auto open-logs-range" data-days="7">
+                        View logs for last week
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-dark bg-warning border-0 shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Last month</h5>
+                    <p class="display-6 fw-semibold mb-3">@Model.LastMonthCount</p>
+                    <button class="btn btn-dark mt-auto open-logs-range" data-days="30">
+                        View logs for last month
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card text-white bg-warning mb-2">
-            <div class="card-body">
-                <h5 class="card-title">Last month</h5>
-                <p class="card-text">@Model.LastMonthCount</p>
-            </div>
+
+    <h5 class="mb-3">Total logs for the selected period: <span class="fw-semibold">@Model.SelectedPeriodCount</span></h5>
+
+    <!-- Donut chart -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div id="logs-3d-donut" style="height: 380px;"></div>
+            <div id="chart-data"
+                 data-labels='@Html.Raw(labelsJson)'
+                 data-values='@Html.Raw(valuesJson)'></div>
         </div>
-    </div>
-</div>
-
-<form method="get" class="mb-3 row g-2 align-items-center">
-    <div class="col-auto">
-        <label class="form-label" for="daysInput">Choose period (days):</label>
-        <input type="number" class="form-control" id="daysInput" name="days" value="@Model.SelectedDays" />
-    </div>
-    <div class="col-auto">
-        <button type="submit" class="btn btn-primary mt-4">Apply</button>
-    </div>
-</form>
-
-<h3>Total logs for the selected period: @Model.SelectedPeriodCount</h3>
-
-<div class="card mt-3">
-    <div class="card-body">
-        <canvas id="logsChart" width="400" height="400"></canvas>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- ECharts (for 3D-like donut with gradients & shadows) -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js" defer></script>
+
     <script>
-        const ctx = document.getElementById('logsChart').getContext('2d');
-        const data = {
-            labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LogsByLevel.Keys)),
-            datasets: [{
-                label: 'Logs count by level',
-                data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.LogsByLevel.Values)),
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.7)',
-                    'rgba(75, 192, 192, 0.7)',
-                    'rgba(255, 206, 86, 0.7)',
-                    'rgba(255, 99, 132, 0.7)'
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 99, 132, 1)'
-                ],
-                borderWidth: 1
-            }]
-        };
-                const config = {
-            type: 'pie',
-            data: data,
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'top' }
-                }
+        // Helpers
+        function toLocalInputValue(d) {
+            // Convert Date -> "yyyy-MM-ddTHH:mm" in local time
+            const pad = (n) => n.toString().padStart(2, '0');
+            const y = d.getFullYear();
+            const m = pad(d.getMonth() + 1);
+            const day = pad(d.getDate());
+            const h = pad(d.getHours());
+            const min = pad(d.getMinutes());
+            return `${y}-${m}-${day}T${h}:${min}`;
+        }
+
+        function localToUtcIso(localStr) {
+            // Treat localStr as local time, return ISO with Z
+            const d = new Date(localStr);
+            // toISOString() already returns Z based on UTC
+            return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString();
+        }
+
+        function openLogsUrl(levelName, startIso, endIso) {
+            // Map chart label to query flags
+            const name = (levelName || '').toLowerCase();
+            const isInfo = name.includes('info');
+            const isWarn = name.includes('warn');
+            const isError = name.includes('error');
+
+            const params = new URLSearchParams({
+                logLevelInfo:    String(isInfo),
+                logLevelWarning: String(isWarn),
+                logLevelError:   String(isError),
+                startTime: startIso,
+                endTime: endIso
+            });
+
+            const url = `/logs?${params.toString()}`;
+            window.open(url, '_blank', 'noopener');
+        }
+
+        // Initialize default range based on SelectedDays (server)
+        (function initDefaultRange() {
+            const selectedDays = Number('@selectedDays');
+            const end = new Date();
+            const start = new Date(end.getTime() - selectedDays * 24 * 60 * 60 * 1000);
+            document.getElementById('range-start').value = toLocalInputValue(start);
+            document.getElementById('range-end').value = toLocalInputValue(end);
+        })();
+
+        // Quick range dropdown
+        document.getElementById('quick-range')?.addEventListener('click', function (e) {
+            const mins = e.target?.getAttribute?.('data-mins');
+            const selectedDaysBtn = e.target?.id === 'quick-selected-days';
+            const end = new Date();
+            let start;
+
+            if (mins) {
+                start = new Date(end.getTime() - Number(mins) * 60 * 1000);
+            } else if (selectedDaysBtn) {
+                const d = Number('@selectedDays');
+                start = new Date(end.getTime() - d * 24 * 60 * 60 * 1000);
+            } else {
+                return;
             }
-        };
-        new Chart(ctx, config);
+
+            document.getElementById('range-start').value = toLocalInputValue(start);
+            document.getElementById('range-end').value = toLocalInputValue(end);
+        });
+
+        // Card buttons: open logs for last N days (all levels)
+        document.querySelectorAll('.open-logs-range').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const days = Number(btn.getAttribute('data-days'));
+                const end = new Date();
+                const start = new Date(end.getTime() - days * 24 * 60 * 60 * 1000);
+                const startIso = new Date(start.getTime() - start.getTimezoneOffset() * 60000).toISOString();
+                const endIso = new Date(end.getTime() - end.getTimezoneOffset() * 60000).toISOString();
+
+                const params = new URLSearchParams({
+                    logLevelInfo: 'true',
+                    logLevelWarning: 'true',
+                    logLevelError: 'true',
+                    startTime: startIso,
+                    endTime: endIso
+                });
+                window.open(`/logs?${params.toString()}`, '_blank', 'noopener');
+            });
+        });
+
+        // Build the donut chart
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartEl = document.getElementById('logs-3d-donut');
+            const chart = echarts.init(chartEl);
+
+            const dataEl = document.getElementById('chart-data');
+            const labels = JSON.parse(dataEl.getAttribute('data-labels') || '[]');
+            const values = JSON.parse(dataEl.getAttribute('data-values') || '[]');
+
+            // Construct series data
+            const seriesData = labels.map((label, i) => {
+                // Soft 3D style using gradients and shadow
+                const gradients = [
+                    ['#9ee3ff', '#2fb3ff'], // info-ish
+                    ['#ffe599', '#ffb703'], // warning-ish
+                    ['#ff9f9f', '#d90429'], // error-ish
+                    ['#c8f7c5', '#47c769'], // success/other
+                    ['#d1c4e9', '#7e57c2'],
+                    ['#ffcdd2', '#ef5350']
+                ];
+                const pair = gradients[i % gradients.length];
+                return {
+                    name: label,
+                    value: values[i] ?? 0,
+                    itemStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: pair[0] },
+                            { offset: 1, color: pair[1] }
+                        ]),
+                        shadowBlur: 30,
+                        shadowColor: 'rgba(0,0,0,0.25)',
+                        shadowOffsetY: 12,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }
+                };
+            });
+
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: p => `${p.marker} <b>${p.name}</b><br/>Count: <b>${p.value}</b> (${p.percent}%)`
+                },
+                legend: {
+                    bottom: 0
+                },
+                series: [{
+                    type: 'pie',
+                    radius: ['45%','70%'],
+                    center: ['50%','45%'],
+                    startAngle: 225,               // slight tilt for depth feel
+                    selectedOffset: 10,
+                    avoidLabelOverlap: true,
+                    label: {
+                        show: true,
+                        formatter: '{b|{b}}  {c}',
+                        rich: { b: { fontWeight: 600 } }
+                    },
+                    labelLine: { length: 12, length2: 10 },
+                    itemStyle: { borderRadius: 8 },
+                    data: seriesData
+                }]
+            };
+
+            chart.setOption(option);
+            window.addEventListener('resize', () => chart.resize());
+
+            // Click slice -> open /logs with proper level & selected time range
+            chart.on('click', function (params) {
+                const startLocal = document.getElementById('range-start').value;
+                const endLocal = document.getElementById('range-end').value;
+                if (!startLocal || !endLocal) return;
+
+                const startIso = localToUtcIso(startLocal);
+                const endIso = localToUtcIso(endLocal);
+                openLogsUrl(params.name, startIso, endIso);
+            });
+        });
     </script>
 }

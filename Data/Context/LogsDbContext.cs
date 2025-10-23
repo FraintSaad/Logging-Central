@@ -6,14 +6,32 @@ namespace Data.Context
 {
     public class LogsDbContext : DbContext
     {
-        public LogsDbContext(DbContextOptions<LogsDbContext> options) : base(options) { }
-        public DbSet<NotificationsRuleEntity> NotificationRules { get; set; }
         public DbSet<LogEntity> SerilogEvents { get; set; }
-        public DbSet<SentNotificationEntity> SentNotifications { get; set; }
+        public DbSet<AlertRuleEntity> AlertRules { get; set; }
+        public DbSet<FiredAlertEntity> FiredAlerts { get; set; }
+        public LogsDbContext(DbContextOptions<LogsDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<LogEntity>().ToTable("SerilogEvents");
+            // SerilogEvents has to be created by the client app's MSSQLSink, so we exclude it from migrations
+            modelBuilder.Entity<LogEntity>(entity =>
+            {
+                entity.ToTable("SerilogEvents", t => t.ExcludeFromMigrations());
+            });
+
+            modelBuilder.Entity<FiredAlertEntity>(entity =>
+            {
+                entity.ToTable("FiredAlerts");
+                entity.HasIndex(e => new { e.RuleId, e.CreatedAt });
+            });
+
+            modelBuilder.Entity<AlertRuleEntity>(entity =>
+            {
+                entity.ToTable("AlertRules");
+                entity.HasIndex(e => e.LogLevel);
+            });
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }

@@ -4,6 +4,7 @@ using Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(LogsDbContext))]
-    partial class LogsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250918064341_Adjustments")]
+    partial class Adjustments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,7 @@ namespace Data.Migrations
 
                     b.Property<string>("LogLevel")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LookbackPeriod")
                         .HasColumnType("int");
@@ -52,9 +55,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LogLevel");
-
-                    b.ToTable("AlertRules", (string)null);
+                    b.ToTable("AlertRules");
                 });
 
             modelBuilder.Entity("Data.Entities.FiredAlertEntity", b =>
@@ -82,9 +83,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RuleId", "CreatedAt");
-
-                    b.ToTable("FiredAlerts", (string)null);
+                    b.ToTable("FiredAlerts");
                 });
 
             modelBuilder.Entity("Data.Models.LogEntity", b =>

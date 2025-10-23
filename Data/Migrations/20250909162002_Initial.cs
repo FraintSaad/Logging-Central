@@ -12,38 +12,51 @@ namespace Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Notifications",
+                name: "AlertRules",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Period = table.Column<int>(type: "int", nullable: false),
-                    ThrashHold = table.Column<int>(type: "int", nullable: false),
-                    LogLevels = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Threshold = table.Column<int>(type: "int", nullable: false),
+                    LogLevel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Recipients = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
+                    table.PrimaryKey("PK_AlertRules", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FiredAlerts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RuleId = table.Column<int>(type: "int", nullable: false),
+                    LogsCount = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FiredAlerts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "SerilogEvents",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Timestamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    MessageTemplate = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Level = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Exception = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Environment = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SerilogEvents", x => x.Id);
+                    table.PrimaryKey("PK_SerilogEvents", x => x.Timestamp);
                 });
         }
 
@@ -51,7 +64,10 @@ namespace Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Notifications");
+                name: "AlertRules");
+
+            migrationBuilder.DropTable(
+                name: "FiredAlerts");
 
             migrationBuilder.DropTable(
                 name: "SerilogEvents");
