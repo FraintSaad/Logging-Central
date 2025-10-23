@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LogsCentral.Controllers
 {
-    [Route("status/logs/live")]
+    [Route("live")]
     public class LiveController : Controller
     {
         private readonly LivePageViewModel _viewModel;
@@ -13,7 +13,6 @@ namespace LogsCentral.Controllers
             _viewModel = viewModel;
         }
 
-        [HttpGet("")]
         public IActionResult Index()
         {
             return View();
@@ -24,13 +23,6 @@ namespace LogsCentral.Controllers
         {
             var logs = await _viewModel.GetLatestLogsAsync(level);
             return Json(logs);
-        }
-
-        [HttpPost("add-test-log")]
-        public async Task<IActionResult> AddTestLog(string level, string message)
-        {
-            await _viewModel.AddTestLogAsync(level, message);
-            return Ok(new { success = true });
         }
     }
 }

@@ -1,38 +1,47 @@
-﻿using LogsCentral.Settings;
+﻿using LogsCentral.Interfaces;
+using LogsCentral.Models;
 using System.Net;
 using System.Net.Mail;
 
 namespace LogsCentral.Services
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
-        private readonly EmailSettings _settings;
+        private readonly SmtpEmailSettings? _settings;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(EmailSettings settings)
+        public EmailService(AppSettings settings, ILogger<EmailService> logger)
         {
-            _settings = settings;
+            _settings = settings.SmtpEmailSettings;
+            _logger = logger;
         }
 
-        public void Send(string toEmails, string subject, string body)
+        public async Task SendMailAsync(string toEmails, string subject, string htmlBody, string plainBody)
         {
-            using (var client = new SmtpClient("smtp.gmail.com", 587))
+            if (_settings == null)
             {
-                client.Credentials = new NetworkCredential(_settings.FromEmail, _settings.Password);
+                _logger.LogError("SMTP settings are not configured.");
+                return;
+            }
+
+            using (var client = new SmtpClient(_settings.Server, _settings.Port))
+            {
+                client.Credentials = new NetworkCredential(_settings.Sender, _settings.Password);
                 client.EnableSsl = true;
 
-                var mail = new MailMessage()
+                var message = new MailMessage()
                 {
-                    From = new MailAddress(_settings.FromEmail),
+                    From = new MailAddress(_settings.Sender),
                     Subject = subject,
-                    Body = body
+                    Body = htmlBody
                 };
 
                 foreach (var email in toEmails.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    mail.To.Add(email.Trim());
+                    message.To.Add(email.Trim());
                 }
 
-                client.Send(mail);
+                await client.SendMailAsync(message);
             }
         }
     }

@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Data.Models
 {
+    [Table("SerilogEvents")]
     public class LogEntity
     {
         public int Id { get; set; }
         public string? Message { get; set; }
-        public string? MessageTemplate { get; set; }
         public string? Level { get; set; }
-        public DateTime Timestamp { get; set; }
         public string? Exception { get; set; }
-        public string? Properties { get; set; }
+        public string? Environment { get; set; }
+        [Key]
+        public DateTimeOffset Timestamp { get; set; }
+        [NotMapped]
+        public DateTimeOffset LocalTimestamp { get; set; }
     }
 }

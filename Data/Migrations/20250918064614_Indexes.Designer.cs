@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(LogsDbContext))]
-    [Migration("20250825133840_AddSendedNotifications")]
-    partial class AddSendedNotifications
+    [Migration("20250918064614_Indexes")]
+    partial class Indexes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Data.Entities.NotificationEntity", b =>
+            modelBuilder.Entity("Data.Entities.AlertRuleEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,29 +33,34 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LogLevels")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Period")
+                    b.Property<int>("CooldownPeriod")
                         .HasColumnType("int");
 
-                    b.Property<int>("ThrashHold")
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LogLevel")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("LookbackPeriod")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Recipients")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Threshold")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Notifications");
+                    b.HasIndex("LogLevel");
+
+                    b.ToTable("AlertRules", (string)null);
                 });
 
-            modelBuilder.Entity("Data.Entities.SendedNotificationEntity", b =>
+            modelBuilder.Entity("Data.Entities.FiredAlertEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -63,30 +68,41 @@ namespace Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("LogId")
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("LogsCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("NotificationId")
+                    b.Property<int>("RuleId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("SendError")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Sent")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
-                    b.ToTable("SendedNotifications");
+                    b.HasIndex("RuleId", "CreatedAt");
+
+                    b.ToTable("FiredAlerts", (string)null);
                 });
 
             modelBuilder.Entity("Data.Models.LogEntity", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<DateTimeOffset>("Timestamp")
+                        .HasColumnType("datetimeoffset");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Environment")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Exception")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
                     b.Property<string>("Level")
                         .HasColumnType("nvarchar(max)");
@@ -94,18 +110,12 @@ namespace Data.Migrations
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MessageTemplate")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Timestamp");
 
-                    b.Property<string>("Properties")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SerilogEvents", (string)null);
+                    b.ToTable("SerilogEvents", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
                 });
 #pragma warning restore 612, 618
         }

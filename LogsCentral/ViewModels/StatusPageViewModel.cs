@@ -21,7 +21,7 @@ namespace LogsCentral.ViewModels
 
         public async Task LoadAsync(int? days)
         {
-            var now = DateTime.Now;
+            var now = DateTimeOffset.UtcNow;
 
             LastDayCount = await _db.SerilogEvents.CountAsync(l => l.Timestamp >= now.AddDays(-1));
             LastWeekCount = await _db.SerilogEvents.CountAsync(l => l.Timestamp >= now.AddDays(-7));

@@ -32,15 +32,5 @@ namespace LogsCentral.ViewModels
                 Message = l.Message
             }).ToList();
         }
-        public async Task AddTestLogAsync(string level, string message)
-        {
-            _db.SerilogEvents.Add(new LogEntity
-            {
-                Timestamp = DateTime.Now,
-                Level = level,
-                Message = message
-            });
-            await _db.SaveChangesAsync();
-        }
     }
 }

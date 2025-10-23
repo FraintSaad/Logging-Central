@@ -1,10 +1,10 @@
 ﻿namespace LogsCentral.Jobs
 {
-    public class NotificationsSenderBackgroundJob : BackgroundService
+    public class AlertsBackgroundJob : BackgroundService
     {
         private readonly IServiceProvider _services;
 
-        public NotificationsSenderBackgroundJob(IServiceProvider services)
+        public AlertsBackgroundJob(IServiceProvider services)
         {
             _services = services;
         }
@@ -15,11 +15,10 @@
             {
                 using (var scope = _services.CreateScope())
                 {
-                    var NotificationsSenderService = scope.ServiceProvider.GetRequiredService<NotificationsSenderService>();
-
-                    await NotificationsSenderService.ProcessNotificationsAsync(stoppingToken);
+                    var alertsService = scope.ServiceProvider.GetRequiredService<AlertService>();
+                    await alertsService.ProcessAlertRulesAsync(stoppingToken);
                 }
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
         }
     }
