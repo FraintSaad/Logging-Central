@@ -13,11 +13,7 @@ namespace Data.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // SerilogEvents has to be created by the client app's MSSQLSink, so we exclude it from migrations
-            modelBuilder.Entity<LogEntity>(entity =>
-            {
-                entity.ToTable("SerilogEvents", t => t.ExcludeFromMigrations());
-            });
+           
 
             modelBuilder.Entity<FiredAlertEntity>(entity =>
             {
@@ -31,6 +27,11 @@ namespace Data.Context
                 entity.HasIndex(e => e.LogLevel);
             });
 
+            modelBuilder.Entity<LogEntity>(entity =>
+            {
+                entity.ToTable("SerilogEvents");
+                entity.HasKey(e => e.Id); 
+            });
             base.OnModelCreating(modelBuilder);
         }
     }

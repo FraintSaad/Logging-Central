@@ -7,11 +7,11 @@ namespace Data.Context
     {
         public LogsDbContext CreateDbContext(string[] args)
         {
-            var connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=LogsDB;Integrated Security=True;Pooling=False;Encrypt=True;Trust Server Certificate=True";
+            var connectionString = "Host=localhost;Port=5432;Database=mydatabase;Username=postgres;Password=postgres";
 
             var optionsBuilder = new DbContextOptionsBuilder<LogsDbContext>();
             var localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            optionsBuilder.UseSqlServer(connectionString);
+            optionsBuilder.UseNpgsql(connectionString);
             return new LogsDbContext(optionsBuilder.Options);
         }
     }

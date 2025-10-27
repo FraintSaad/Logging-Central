@@ -46,7 +46,7 @@ namespace LogsCentral
             builder.Services.AddHostedService<CleanUpBackgroundJob>();
 
             builder.Services.AddDbContext<LogsDbContext>(options => options
-                .UseSqlServer(appSettings.DatabaseConnectionString)
+                .UseNpgsql(appSettings.DatabaseConnectionString)
             );
 
             var loggerConfig = new LoggerConfiguration()
