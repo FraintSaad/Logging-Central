@@ -27,7 +27,7 @@ namespace LogsCentral
 
             var appSettings = new AppSettings();
             builder.Configuration.Bind(appSettings);
-            appSettings.Validate();
+            //appSettings.Validate();
 
             builder.Services.AddControllersWithViews();
 
@@ -36,7 +36,7 @@ namespace LogsCentral
             builder.Services.AddScoped<CleanUpService>();
             builder.Services.AddScoped<AlertService>();
             builder.Services.AddScoped<AlertEmailGenerator>();
-            builder.Services.AddScoped<IEmailService, AzureEmailService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<LogsViewModel>();
             builder.Services.AddScoped<AlertRulesPageViewModel>();
             builder.Services.AddScoped<StatusPageViewModel>();

@@ -52,14 +52,14 @@ namespace LogsCentral.Models
             {
                 throw new ArgumentException("Database connection string cannot be null or empty.", nameof(DatabaseConnectionString));
             }
-            if (string.IsNullOrWhiteSpace(AzureEmailSender))
+            /*if (string.IsNullOrWhiteSpace(AzureEmailSender))
             {
                 throw new ArgumentException("AzureEmailSender cannot be null or empty.", nameof(AzureEmailSender));
             }
             if (string.IsNullOrWhiteSpace(AzureEmailConnectionString))
             {
                 throw new ArgumentException("AzureEmailConnectionString cannot be null or empty.", nameof(AzureEmailConnectionString));
-            }
+            }*/
 
             // SmtpEmailSettings is optional
             if (SmtpEmailSettings != null)
