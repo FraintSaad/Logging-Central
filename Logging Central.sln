@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogsCentral", "LogsCentral\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogsCentral.Tests", "LogsCentral.Tests\LogsCentral.Tests.csproj", "{F1E9FA2F-C803-4915-A535-4181F0F0AA26}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogsSenderConsole", "LogsSenderConsole\LogsSenderConsole.csproj", "{92DEE219-2EFA-44C2-8D1C-0DF47F4B8B5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{F1E9FA2F-C803-4915-A535-4181F0F0AA26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1E9FA2F-C803-4915-A535-4181F0F0AA26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1E9FA2F-C803-4915-A535-4181F0F0AA26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92DEE219-2EFA-44C2-8D1C-0DF47F4B8B5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92DEE219-2EFA-44C2-8D1C-0DF47F4B8B5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92DEE219-2EFA-44C2-8D1C-0DF47F4B8B5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92DEE219-2EFA-44C2-8D1C-0DF47F4B8B5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
